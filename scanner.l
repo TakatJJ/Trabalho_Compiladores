@@ -5,6 +5,8 @@
 %}
 
 
+%x COMMENT
+
 
 %%
 [ \t]*(char)[ \t]* {return KW_CHAR;}
@@ -16,7 +18,6 @@ int {return KW_INT;}
 [ \t]*(read)[ \t]* {return KW_READ;}
 [ \t]*(print)[ \t(]* {return KW_PRINT;}
 [ \t]*(return)[ \t(;]* {return KW_RETURN;}
-
 [,;:()\[\]{}=+\-*/%<>&|~] {return yytext[0];}
 
 
@@ -25,7 +26,15 @@ int {return KW_INT;}
 
 
 <<EOF>> {isRunningConstant = false; return 9;}
+"/**" {BEGIN(COMMENT); }
+
+<COMMENT>"**/" {BEGIN(INITIAL);}
+<COMMENT>"\n" {numberOfLines++;}
+<COMMENT>. {}
+
+
 [ \t] {}
+. {return TOKEN_ERROR;}
 %%
 
 #include <iostream>
