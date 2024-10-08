@@ -26,8 +26,8 @@ int {return KW_INT;}
 
 
 <<EOF>> {isRunningConstant = false; return 9;}
+"//".* {}
 "/**" {BEGIN(COMMENT); }
-
 <COMMENT>"**/" {BEGIN(INITIAL);}
 <COMMENT>"\n" {numberOfLines++;}
 <COMMENT>. {}
