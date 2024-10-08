@@ -23,6 +23,7 @@
 [a-zA-Z0-9]+ {return TK_IDENTIFIER;}
 
 #[0-9]+ {return LIT_INT;}
+'.'     {return LIT_CHAR;}
 [\n]    {numberOfLines++;}
 
 

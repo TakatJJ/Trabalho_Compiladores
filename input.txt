@@ -11,5 +11,7 @@ teste
 // Pao 2132 com banana
 
     int abc = #25;
+    char def = 'X';
+    char def2 = 'ABC';
     return 0 ;
 }
