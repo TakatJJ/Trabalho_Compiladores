@@ -3,9 +3,12 @@
     bool isRunningConstant = true;
     int numberOfLines = 1;
 %}
+
+
+
 %%
 [ \t]*(char)[ \t]* {return KW_CHAR;}
-[ \t]*(int)[ \t]* {return KW_INT;}
+int {return KW_INT;}
 [ \t]*(if)[ \t(]* {return KW_IF;}
 [ \t]*(then)[ \t(]* {return KW_THEN;}
 [ \t]*(else)[ \t(]* {return KW_ELSE;}

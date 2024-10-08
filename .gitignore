@@ -1,0 +1,4 @@
+*.o
+etapa1
+lex.yy.cpp
+*.bat
