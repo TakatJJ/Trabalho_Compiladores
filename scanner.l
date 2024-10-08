@@ -9,19 +9,20 @@
 
 
 %%
-[ \t]*(char)[ \t]* {return KW_CHAR;}
-int {return KW_INT;}
-[ \t]*(if)[ \t(]* {return KW_IF;}
-[ \t]*(then)[ \t(]* {return KW_THEN;}
-[ \t]*(else)[ \t(]* {return KW_ELSE;}
-[ \t]*(while)[ \t(]* {return KW_WHILE;}
-[ \t]*(read)[ \t]* {return KW_READ;}
-[ \t]*(print)[ \t(]* {return KW_PRINT;}
-[ \t]*(return)[ \t(;]* {return KW_RETURN;}
+"char" {return KW_CHAR;}
+"int" {return KW_INT;}
+"if"  {return KW_IF;}
+"then" {return KW_THEN;}
+"else" {return KW_ELSE;}
+"while" {return KW_WHILE;}
+"read" {return KW_READ;}
+"print" {return KW_PRINT;}
+"return" {return KW_RETURN;}
+
 [,;:()\[\]{}=+\-*/%<>&|~] {return yytext[0];}
+[a-zA-Z0-9]+ {return TK_IDENTIFIER;}
 
-
-[ \t]*[a-zA-Z0-9]+[ \t]* {return TK_IDENTIFIER;}
+#[0-9]+ {return LIT_INT;}
 [\n]    {numberOfLines++;}
 
 
