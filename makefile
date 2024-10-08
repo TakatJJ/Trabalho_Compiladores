@@ -2,10 +2,10 @@
 target : run
 	run.exe input.txt
 run :  lex.yy.o main.o
-	g++ main.o lex.yy.o -o run
+	g++ main.o lex.yy.o -o run -std=c++11 -Wall
 
 lex.yy.o : lex.yy.cpp
-	g++  lex.yy.cpp -c
+	g++  lex.yy.cpp -c 
 
 main.o : main.cpp
 	g++ main.cpp -c
@@ -16,4 +16,4 @@ lex.yy.cpp : scanner.l
 	del lex.yy.c
 
 clean :
-	del *.o run.exe lex.yy.cpp
+	del *.o run.exe lex.yy.cpp lex.yy.c
