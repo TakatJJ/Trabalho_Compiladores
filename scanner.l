@@ -3,13 +3,12 @@
     #include <string>
     #include <map>
     using namespace std;
-    bool isRunningConstant = true;
-    int numberOfLines = 1;
 
+    int isRunningConstant = 1;
+    int numberOfLines = 1;
 
     map<string, int> symbols_table;
 
-    
 %}
 
 
@@ -34,15 +33,15 @@
 [a-zA-Z0-9]+ {symbols_table[yytext] = TK_IDENTIFIER; return TK_IDENTIFIER;}
 
 #[0-9]+ {symbols_table[yytext] = LIT_INT; LIT_INT;}
+\'..*\'    {return TOKEN_ERROR;}
 '.'     {symbols_table[yytext] = LIT_CHAR; return LIT_CHAR;}
-
-\"([^\"\n\\]|\\.)*\" {symbols_table[yytext] = LIT_STRING; return LIT_STRING;}
 \"([^\"\n\\]|\\.)*\"(.\")+ {return TOKEN_ERROR;}
+\"([^\"\n\\]|\\.)*\" {symbols_table[yytext] = LIT_STRING; return LIT_STRING;}
 "."    {return TOKEN_ERROR;}
 [\n]    {numberOfLines++;}
 
 
-<<EOF>> {isRunningConstant = false; return 9;}
+<<EOF>> {isRunningConstant = 0; return EOF;}
 "//".* {}
 "/**" {BEGIN(COMMENT); }
 <COMMENT>"**/" {BEGIN(INITIAL);}
@@ -55,7 +54,7 @@
 %%
 
 #include <iostream>
-using namespace std;
+
 
 
 int yywrap ()
@@ -63,7 +62,7 @@ int yywrap ()
     return 1;
 }
 
-bool isRunning() 
+int isRunning() 
 {
     return isRunningConstant;
 }
@@ -75,4 +74,12 @@ void initMe()
 int getLineNumber()
 {
     return numberOfLines;
+}
+
+void printSymbolsTable()
+{
+    for (map<string, int>::iterator it = symbols_table.begin(); it != symbols_table.end(); ++it)
+    {
+        cout << it->first << " => " << it->second << endl;
+    }
 }
