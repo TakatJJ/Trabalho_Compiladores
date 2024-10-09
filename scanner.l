@@ -2,7 +2,7 @@
     #include "tokens.h"
     #include <string>
     #include <map>
-    using namesapce std;
+    using namespace std;
     bool isRunningConstant = true;
     int numberOfLines = 1;
 
