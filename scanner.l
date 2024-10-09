@@ -2,18 +2,14 @@
     #include "tokens.h"
     #include <string>
     #include <map>
-    
+    using namesapce std;
     bool isRunningConstant = true;
     int numberOfLines = 1;
 
 
-<<<<<<< HEAD
-=======
     map<string, int> symbols_table;
 
     
-
->>>>>>> bcf9d81db8aea363aabf6fc1a43a4dd339686f43
 %}
 
 
@@ -32,15 +28,6 @@
 "print" {return KW_PRINT;}
 "return" {return KW_RETURN;}
 
-<<<<<<< HEAD
-\"(.)*\" {return LIT_STRING;}
-
-[,;:()\[\]{}=+\-*/%<>&|~] {return yytext[0];}
-[a-zA-Z0-9]+ {return TK_IDENTIFIER;}
-
-#[0-9]+ {map[yytext] = LIT_INT; return LIT_INT;}
-'.'     {map[yytext] = LIT_CHAR; return LIT_CHAR;}
-=======
 
 [,;:()\[\]{}=+\-*/%<>&|~] {return yytext[0];}
 
@@ -52,7 +39,6 @@
 \"([^\"\n\\]|\\.)*\" {symbols_table[yytext] = LIT_STRING; return LIT_STRING;}
 \"([^\"\n\\]|\\.)*\"(.\")+ {return TOKEN_ERROR;}
 "."    {return TOKEN_ERROR;}
->>>>>>> bcf9d81db8aea363aabf6fc1a43a4dd339686f43
 [\n]    {numberOfLines++;}
 
 

@@ -15,12 +15,7 @@ teste
     char def = 'X';
     char a = X;
     char def2 = 'ABC';
-<<<<<<< HEAD
-    string aaaaaaaaaaaaa = "Teset21930---889279111%%$%¨$@¨#@&*YHJINMOKL";
-    string bb = "tste"ewre "ewqe" rewrwe";
-=======
         //Comentario 2\n
     string teste = "weqeqw e" "  // -> erro
->>>>>>> bcf9d81db8aea363aabf6fc1a43a4dd339686f43
     return 0 ;
 }
