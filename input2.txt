@@ -1,8 +1,13 @@
 char teste = 'ABC'
 char teste3 = 'w'
-"Testando \"aspas duplas dentro da \" String\n" "Testando outra string" " " nao string"
+"Testando \"aspas duplas dentro da \" String\n" "Testando outra string" " "
+" boa tarde \n \t" " "
+
+"boa tarde \n "
+"Boa tarde \n "
 /**
 
 COMENTARIO
+
+
 **/
-/**

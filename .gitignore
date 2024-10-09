@@ -2,3 +2,5 @@
 etapa1
 lex.yy.cpp
 *.bat
+compac
+.vscode

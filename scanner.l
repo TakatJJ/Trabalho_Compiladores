@@ -33,16 +33,20 @@
 [a-zA-Z0-9]+ {symbols_table[yytext] = TK_IDENTIFIER; return TK_IDENTIFIER;}
 
 #[0-9]+ {symbols_table[yytext] = LIT_INT; LIT_INT;}
-\'..*\'    {return TOKEN_ERROR;}
+
 '.'     {symbols_table[yytext] = LIT_CHAR; return LIT_CHAR;}
-\"([^\"\n\\]|\\.)*\"(.\")+ {return TOKEN_ERROR;}
-\"([^\"\n\\]|\\.)*\" {symbols_table[yytext] = LIT_STRING; return LIT_STRING;}
+'.+'    {return TOKEN_ERROR;}
+
+\"([^"\\]|\\.)*\" {symbols_table[yytext] = LIT_STRING; return LIT_STRING;}
+
 "."    {return TOKEN_ERROR;}
 [\n]    {numberOfLines++;}
 
 
 <<EOF>> {isRunningConstant = 0; return EOF;}
+
 "//".* {}
+
 "/**" {BEGIN(COMMENT); }
 <COMMENT>"**/" {BEGIN(INITIAL);}
 <COMMENT>"\n" {numberOfLines++;}
