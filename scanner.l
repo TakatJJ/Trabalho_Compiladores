@@ -2,10 +2,13 @@
     #include "tokens.h"
     bool isRunningConstant = true;
     int numberOfLines = 1;
+
+
 %}
 
 
 %x COMMENT
+
 
 
 %%
@@ -19,11 +22,13 @@
 "print" {return KW_PRINT;}
 "return" {return KW_RETURN;}
 
+\"(.)*\" {return LIT_STRING;}
+
 [,;:()\[\]{}=+\-*/%<>&|~] {return yytext[0];}
 [a-zA-Z0-9]+ {return TK_IDENTIFIER;}
 
-#[0-9]+ {return LIT_INT;}
-'.'     {return LIT_CHAR;}
+#[0-9]+ {map[yytext] = LIT_INT; return LIT_INT;}
+'.'     {map[yytext] = LIT_CHAR; return LIT_CHAR;}
 [\n]    {numberOfLines++;}
 
 

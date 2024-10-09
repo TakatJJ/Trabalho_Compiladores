@@ -12,6 +12,9 @@ teste
 
     int abc = #25;
     char def = 'X';
+    char a = X;
     char def2 = 'ABC';
+    string aaaaaaaaaaaaa = "Teset21930---889279111%%$%¨$@¨#@&*YHJINMOKL";
+    string bb = "tste"ewre "ewqe" rewrwe";
     return 0 ;
 }
