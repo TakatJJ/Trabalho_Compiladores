@@ -8,13 +8,14 @@ testet
 
 teste
 **/
-
+"olaaaa\"      'sou o dolynho'     "
 // Pao 2132 com banana
 
     int abc = #25;
     char def = 'X';
-    char def2 = 'ABC';
+    char def2 = 'ABC'; // -> erro
         //Comentario 2\n
     string teste = "weqeqw e" "  // -> erro
-    return 0 ;
+    string 312 = "E-mail !!!!"; // -> string
+    return #0;
 }
