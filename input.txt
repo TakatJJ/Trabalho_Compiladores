@@ -1,9 +1,10 @@
+inteiro
 int main () {
     /**
 Teste comentário
 testet
 
-
+"olaaaa\" "
 
 teste
 **/
@@ -13,5 +14,7 @@ teste
     int abc = #25;
     char def = 'X';
     char def2 = 'ABC';
+        //Comentario 2\n
+    string teste = "weqeqw e" "  // -> erro
     return 0 ;
 }
