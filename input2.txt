@@ -1,0 +1,8 @@
+char teste = 'ABC'
+char teste3 = 'w'
+"Testando \"aspas duplas dentro da \" String\n" "Testando outra string" " " nao string"
+/**
+
+COMENTARIO
+**/
+/**
