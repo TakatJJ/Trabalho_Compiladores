@@ -32,7 +32,7 @@
 
 [a-zA-Z0-9]+ {symbols_table[yytext] = TK_IDENTIFIER; return TK_IDENTIFIER;}
 
-#[0-9]+ {symbols_table[yytext] = LIT_INT; LIT_INT;}
+#[0-9]+ {symbols_table[yytext] = LIT_INT; return LIT_INT;}
 
 '.'     {symbols_table[yytext] = LIT_CHAR; return LIT_CHAR;}
 '.+'    {return TOKEN_ERROR;}
