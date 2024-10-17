@@ -5,6 +5,8 @@ char teste3 = 'w'
 
 "boa tarde \n "
 "Boa tarde \n "
+
+int abc = #213;
 /**
 
 COMENTARIO
