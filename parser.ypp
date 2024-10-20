@@ -27,19 +27,31 @@
 
 %%
 
-program: cmd_list
+program: dec_list
         ;
 type: KW_INT
     | KW_CHAR
     ;
-cmd_list: cmd cmd_list
-        | cmd
+dec_list : dec dec_list
+        | dec
+        ;
+dec: 
+     type TK_IDENTIFIER '=''=' lit ';'
+   | type TK_IDENTIFIER '[' LIT_INT ']' '=''=' lit_list';'
+   | type TK_IDENTIFIER '[' LIT_INT ']' ';'
+   | type TK_IDENTIFIER '(' param_list ')' block 
         ;
 
-block: '{' cmd_list '}'
+lit_list: lit lit_list
+        | lit
         ;
 
-param_list: type TK_IDENTIFIER  param_list_tail
+lit: LIT_INT
+    | LIT_CHAR
+    ;
+
+param_list: 
+        type TK_IDENTIFIER  param_list_tail
         | 
         ;
         
@@ -47,23 +59,54 @@ param_list_tail : ',' type TK_IDENTIFIER param_list_tail
         | 
         ;
 
+block: '{' cmd_list '}'
+        ;
+
+cmd_list: cmd cmd_list
+        | cmd
+        ;
+
 cmd: ';' 
-   | KW_IF block KW_THEN block
-   | KW_IF block KW_THEN block KW_ELSE block
-   | KW_READ 
+   | KW_IF '('expr')' KW_THEN cmd
+   | KW_IF '('expr')' KW_THEN cmd KW_ELSE cmd
+   | KW_READ TK_IDENTIFIER ';'
    | KW_RETURN expr ';'
    | KW_PRINT LIT_STRING ';'
-   | KW_WHILE
-   | type TK_IDENTIFIER ';'
-   | type TK_IDENTIFIER '=' expr ';'
-   | TK_IDENTIFIER '=' expr ';'
-   | type TK_IDENTIFIER '(' param_list ')' block   
+   | KW_WHILE '('expr')' cmd
+   | block
+   | TK_IDENTIFIER '=''=' expr ';'
+   | TK_IDENTIFIER '[' expr ']' '=''=' expr ';'
+
   ;
 
 
 expr: 
+        expr '+' expr
+        | expr '-' expr
+        | expr '*' expr
+        | expr '/' expr
+        | expr '<' expr
+        | expr '>' expr
+        | expr '=' expr
+        | expr '&' expr
+        | expr '|' expr
+        | expr '~' expr
+        | '(' expr ')'
+        | TK_IDENTIFIER '(' arg_list ')'
+        | TK_IDENTIFIER
+        | TK_IDENTIFIER '[' expr ']'
+        | lit
+        ;
 
-   
+arg_list:
+        expr arg_list_tail
+        | 
+        ;
+
+arg_list_tail:
+        ',' expr arg_list_tail
+        | 
+        ;
 %%
 
 int yyerror(const char *s) {
