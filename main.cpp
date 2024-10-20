@@ -1,32 +1,21 @@
 #include <iostream>
 using namespace std;
-
+#include "parser.tab.cpp"
+int yyparse();
 //lex.yy.h
 int yylex();
 void printSymbolsTable();
 bool isRunning();
 int getLineNumber();
+int yyerror(const char *s);
 extern char *yytext;
 extern FILE *yyin;
 int main (int argc, char *argv[])
 {
     yyin = fopen(argv[1], "r");
     cout << "Token Text: " << argv[1] << " Number of files: "<< argc << endl;
-    int token = yylex();
-    while (isRunning() != 0)
-    {   
-
-        if(token == 290){
-            cout << "[Erro Lexico] " << "Token: " << token << " Text: " << yytext << " Linha: " << getLineNumber() << endl;
-        }
-        else{
-
-            cout << "Token: " << token << " Text: " << yytext << endl;
-
-        }
-        token = yylex();
-    }
-    cout << "Number of lines: " << getLineNumber() << endl;
+    yyparse();
+    cout<< "Compilation finished successfully" << endl;
 
     printSymbolsTable();
     return 0;

@@ -1,0 +1,73 @@
+%{
+        int yyerror(const char *s);
+        int yylex ();
+        int getLineNumber();
+        #include <cstdio>
+        #include <stdio.h>
+        #include <iostream>
+%}
+
+%token KW_CHAR          
+%token KW_INT         
+%token KW_IF             
+%token KW_THEN           
+%token KW_ELSE           
+%token KW_WHILE          
+%token KW_READ           
+%token KW_PRINT          
+%token KW_RETURN      
+%token TK_IDENTIFIER  
+%token LIT_INT           
+%token LIT_CHAR          
+%token LIT_STRING     
+%token TOKEN_ERROR    
+
+%left "+" "-"
+%left "*" "/"
+
+%%
+
+program: cmd_list
+        ;
+type: KW_INT
+    | KW_CHAR
+    ;
+cmd_list: cmd cmd_list
+        | cmd
+        ;
+
+block: '{' cmd_list '}'
+        ;
+
+param_list: type TK_IDENTIFIER  param_list_tail
+        | 
+        ;
+        
+param_list_tail : ',' type TK_IDENTIFIER param_list_tail 
+        | 
+        ;
+
+cmd: ';' 
+   | KW_IF block KW_THEN block
+   | KW_IF block KW_THEN block KW_ELSE block
+   | KW_READ 
+   | KW_RETURN expr ';'
+   | KW_PRINT LIT_STRING ';'
+   | KW_WHILE
+   | type TK_IDENTIFIER ';'
+   | type TK_IDENTIFIER '=' expr ';'
+   | TK_IDENTIFIER '=' expr ';'
+   | type TK_IDENTIFIER '(' param_list ')' block   
+  ;
+
+
+expr: 
+
+   
+%%
+
+int yyerror(const char *s) {
+  fprintf(stderr, "Error: %s in line %d\n", s, getLineNumber());
+  exit(3);
+  return 0;
+}

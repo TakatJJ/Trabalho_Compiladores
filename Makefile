@@ -1,16 +1,20 @@
-CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+target : run
+	run.exe input2.txt 
+run :  parser.tab.cpp lex.yy.o main.o
+	g++ main.o lex.yy.o -o run
 
-target: etapa1
+lex.yy.o : lex.yy.cpp
+	g++  lex.yy.cpp -c
 
-etapa1: lex.yy.o main.o
-	$(CXX) lex.yy.o main.o -o etapa1
+main.o : main.cpp
+	g++ main.cpp parser.tab.cpp  -c
+lex.yy.cpp : scanner.l
+	flex scanner.l
+	ren lex.yy.c lex.yy.cpp
+	del lex.yy.c
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $< -c
+parser.tab.cpp : parser.ypp
+	bison -d -o parser.tab.cpp parser.ypp
 
-lex.yy.cpp: scanner.l
-	flex -o lex.yy.cpp scanner.l
-
-clean:
-	rm etapa1 lex.yy.cpp *.o
+clean :
+	del *.o run.exe lex.yy.cpp parser.tab.cpp parser.tab.hpp
