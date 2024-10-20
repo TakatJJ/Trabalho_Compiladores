@@ -1,10 +1,15 @@
 %{
-        int yyerror(const char *s);
-        int yylex ();
-        int getLineNumber();
         #include <cstdio>
         #include <stdio.h>
         #include <iostream>
+        #include <map>
+        #include <string>
+        using namespace std;
+        // int yyerror(const char *s);
+        int yylex ();
+        int getLineNumber();
+        int yyerror(const char *s);
+
 %}
 
 %token KW_CHAR          
@@ -22,17 +27,19 @@
 %token LIT_STRING     
 %token TOKEN_ERROR    
 
-%left "+" "-"
-%left "*" "/"
+%left '+' '-'
+%left '*' '/'
+%left '<' '>' '=' '&' '|'
+%right '~'
 
 %%
 
-program: dec_list
+program: 
+        dec_list
         ;
-type: KW_INT
-    | KW_CHAR
-    ;
-dec_list : dec dec_list
+
+dec_list : 
+        dec dec_list
         | dec
         ;
 dec: 
@@ -46,9 +53,7 @@ lit_list: lit lit_list
         | lit
         ;
 
-lit: LIT_INT
-    | LIT_CHAR
-    ;
+
 
 param_list: 
         type TK_IDENTIFIER  param_list_tail
@@ -58,6 +63,10 @@ param_list:
 param_list_tail : ',' type TK_IDENTIFIER param_list_tail 
         | 
         ;
+
+type: KW_INT
+    | KW_CHAR
+    ;
 
 block: '{' cmd_list '}'
         ;
@@ -71,14 +80,13 @@ cmd: ';'
    | KW_IF '('expr')' KW_THEN cmd KW_ELSE cmd
    | KW_READ TK_IDENTIFIER ';'
    | KW_RETURN expr ';'
-   | KW_PRINT LIT_STRING ';'
+   | KW_PRINT print_list ';'
    | KW_WHILE '('expr')' cmd
    | block
    | TK_IDENTIFIER '=''=' expr ';'
    | TK_IDENTIFIER '[' expr ']' '=''=' expr ';'
 
   ;
-
 
 expr: 
         expr '+' expr
@@ -98,6 +106,22 @@ expr:
         | lit
         ;
 
+lit: 
+    LIT_INT
+    | LIT_CHAR
+    | LIT_STRING
+    ;
+
+print_list: 
+        expr print_list_tail
+        | LIT_STRING print_list_tail
+        ;
+
+print_list_tail:
+        ',' expr print_list_tail
+        | ',' LIT_STRING print_list_tail
+        | 
+        ;
 arg_list:
         expr arg_list_tail
         | 
@@ -112,5 +136,5 @@ arg_list_tail:
 int yyerror(const char *s) {
   fprintf(stderr, "Error: %s in line %d\n", s, getLineNumber());
   exit(3);
-  return 0;
+  return 3;
 }
