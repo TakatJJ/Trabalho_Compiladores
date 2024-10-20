@@ -1,7 +1,7 @@
 target : run
 	run.exe input2.txt 
 run :  parser.tab.cpp lex.yy.o main.o
-	g++ main.o lex.yy.o -o run
+	g++ main.o lex.yy.o -o run -lfl
 
 lex.yy.o : lex.yy.cpp
 	g++  lex.yy.cpp -c
@@ -14,7 +14,7 @@ lex.yy.cpp : scanner.l
 	del lex.yy.c
 
 parser.tab.cpp : parser.ypp
-	bison -d -o parser.tab.cpp parser.ypp
+	bison -d -v -t -W -o parser.tab.cpp parser.ypp
 
 clean :
-	del *.o run.exe lex.yy.cpp parser.tab.cpp parser.tab.hpp
+	del *.o run.exe lex.yy.cpp parser.tab.cpp parser.tab.hpp parser.output

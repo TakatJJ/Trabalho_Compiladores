@@ -96,7 +96,7 @@
 <COMMENT>. {}
 
 
-[\t] {}
+[ \t] {}
 . {return TOKEN_ERROR;}
 
 %%

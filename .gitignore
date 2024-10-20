@@ -4,3 +4,5 @@ lex.yy.cpp
 *.bat
 compac
 .vscode
+*.tab.cpp
+*.tab.hpp
