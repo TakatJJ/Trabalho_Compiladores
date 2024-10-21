@@ -44,9 +44,12 @@ dec_list :
         ;
 dec: 
      type TK_IDENTIFIER '=' lit ';'
-   | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_list ';'
-   | type TK_IDENTIFIER '[' LIT_INT ']' ';'
+   | type vector '=' lit_list ';'
+   | type vector ';'
    | type TK_IDENTIFIER '(' param_list ')' block 
+        ;
+
+vector: TK_IDENTIFIER '[' LIT_INT ']'
         ;
 
 lit_list: lit lit_list
@@ -102,7 +105,7 @@ expr:
         | '(' expr ')'
         | TK_IDENTIFIER '(' arg_list ')'
         | TK_IDENTIFIER
-        | TK_IDENTIFIER '[' expr ']'
+        | vector
         | lit
         ;
 
@@ -117,8 +120,8 @@ print_list:
         ;
 
 print_list_tail:
-        ',' expr print_list_tail
-        | ',' LIT_STRING print_list_tail
+         expr print_list_tail
+        |  LIT_STRING print_list_tail
         | 
         ;
 arg_list:
