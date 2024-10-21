@@ -78,7 +78,8 @@ cmd_list: cmd cmd_list
         | cmd
         ;
 
-cmd: ';' 
+cmd:
+   |';'
    | KW_IF '('expr')' KW_THEN cmd
    | KW_IF '('expr')' KW_THEN cmd KW_ELSE cmd
    | KW_READ TK_IDENTIFIER ';'
