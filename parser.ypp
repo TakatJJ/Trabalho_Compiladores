@@ -115,16 +115,12 @@ lit:
     | LIT_CHAR
     ;
 
-print_list: 
-        expr print_list_tail
-        | LIT_STRING print_list_tail
+print_list: expr print_list
+        | LIT_STRING print_list
+        | expr
+        | LIT_STRING
         ;
 
-print_list_tail:
-         expr print_list_tail
-        |  LIT_STRING print_list_tail
-        | 
-        ;
 arg_list:
         expr arg_list_tail
         | 

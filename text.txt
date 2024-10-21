@@ -4,8 +4,9 @@ char a = #15;
 char c = 'x';
 char 7 = #100;
 int number = 'A';
+//int adewerw = 'ads';
 int 1 = #1;
-//int v[#10] = 'a' #0'b'#0 #0 #0 #0 #0 #0 #0;
+int v[#10] = 'a' #0'b'#0 #0 #0 #0 #0 #0 #0;
 int matrix[#100];
 
 /**

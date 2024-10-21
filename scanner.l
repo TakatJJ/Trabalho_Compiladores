@@ -54,14 +54,6 @@
   return TK_IDENTIFIER;
 }
 
-#[0-9]+ {
-
-  if (symbols_table.find(yytext) == symbols_table.end()) {
-    symbols_table[yytext] = Symbol(LIT_INT, yytext);
-  }
-  return LIT_INT;
-}
-
 '.' {
 
   if (symbols_table.find(yytext) == symbols_table.end()) {
@@ -70,7 +62,15 @@
   return LIT_CHAR;
 }
 
-'.+' { return TOKEN_ERROR; }
+
+#[0-9]+ {
+
+  if (symbols_table.find(yytext) == symbols_table.end()) {
+    symbols_table[yytext] = Symbol(LIT_INT, yytext);
+  }
+  return LIT_INT;
+}
+
 
 \"([^"\\]|\\.)*\" {
 
