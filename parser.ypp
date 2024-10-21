@@ -43,8 +43,8 @@ dec_list :
         | dec
         ;
 dec: 
-     type TK_IDENTIFIER '=''=' lit ';'
-   | type TK_IDENTIFIER '[' LIT_INT ']' '=''=' lit_list';'
+     type TK_IDENTIFIER '=' lit ';'
+   | type TK_IDENTIFIER '[' LIT_INT ']' '=' lit_list ';'
    | type TK_IDENTIFIER '[' LIT_INT ']' ';'
    | type TK_IDENTIFIER '(' param_list ')' block 
         ;
@@ -83,8 +83,8 @@ cmd: ';'
    | KW_PRINT print_list ';'
    | KW_WHILE '('expr')' cmd
    | block
-   | TK_IDENTIFIER '=''=' expr ';'
-   | TK_IDENTIFIER '[' expr ']' '=''=' expr ';'
+   | TK_IDENTIFIER '=' expr ';'
+   | TK_IDENTIFIER '[' expr ']' '=' expr ';'
 
   ;
 
@@ -109,7 +109,6 @@ expr:
 lit: 
     LIT_INT
     | LIT_CHAR
-    | LIT_STRING
     ;
 
 print_list: 
