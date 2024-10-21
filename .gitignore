@@ -1,8 +1,10 @@
 *.o
 etapa1
+etapa2
 lex.yy.cpp
 *.bat
 compac
 .vscode
 *.tab.cpp
 *.tab.hpp
+*.output
