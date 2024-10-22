@@ -1,8 +1,8 @@
 %{
 
-  #include "parser.tab.hpp"
   #include <map>
   #include <string>
+  #include "tokens.h"
   using namespace std;
 
   int isRunningConstant = 1;
