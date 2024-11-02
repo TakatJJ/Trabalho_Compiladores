@@ -50,12 +50,7 @@ string getTokenCLass(int token) {
 int main(int argc, char *argv[]) {
   yyin = fopen(argv[1], "r");
   cout << "Token Text: " << argv[1] << " Number of files: " << argc << endl;
-
-  // while(isRunning()){
-  //     int tok = yylex();
-  //     cout << "Token: " << getTokenCLass(tok) << " Number : " << tok << "
-  //     Text: " << yytext << " Line: " << getLineNumber() << endl;
-  // }
+  
   yyparse();
   cout << "Compilation finished successfully" << endl;
 

@@ -8,3 +8,4 @@ compac
 *.tab.cpp
 *.tab.hpp
 *.output
+Makefile

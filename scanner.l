@@ -1,5 +1,6 @@
 %{
 
+  #include "Symbols.hpp"
   #include "parser.tab.hpp"
   #include <map>
   #include <string>
@@ -7,23 +8,6 @@
 
   int isRunningConstant = 1;
   int numberOfLines = 1;
-
-  class Symbol {
-
-  private:
-    int type;
-    string text;
-
-  public:
-    Symbol() : type(0), text("") {}
-    Symbol(int type, string text) {
-      this->type = type;
-      this->text = text;
-    }
-
-    int get_type() { return this->type; }
-    string get_text() { return this->text; }
-  };
 
   map<string, Symbol> symbols_table;
 
