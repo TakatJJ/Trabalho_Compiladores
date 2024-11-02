@@ -5,12 +5,25 @@
         #include <map>
         #include <string>
         using namespace std;
-        // int yyerror(const char *s);
         int yylex ();
+        int yyparse();
         int getLineNumber();
         int yyerror(const char *s);
+        
 
 %}
+
+%code requires 
+{ 
+#include "AST.hpp" 
+#include "Symbols.hpp"
+#include "AST.cpp"
+}
+
+%union {
+        Symbol *symbol;
+        AST *ast;
+}
 
 %token KW_CHAR          
 %token KW_INT         
@@ -21,10 +34,10 @@
 %token KW_READ           
 %token KW_PRINT          
 %token KW_RETURN      
-%token TK_IDENTIFIER  
-%token LIT_INT           
-%token LIT_CHAR          
-%token LIT_STRING     
+%token<symbol> TK_IDENTIFIER  
+%token<symbol> LIT_INT           
+%token<symbol> LIT_CHAR          
+%token<symbol> LIT_STRING     
 %token TOKEN_ERROR    
 
 %left '+' '-'
@@ -104,13 +117,13 @@ expr:
         | expr '~' expr
         | '(' expr ')'
         | TK_IDENTIFIER '(' arg_list ')'
-        | TK_IDENTIFIER
+        | TK_IDENTIFIER 
         | TK_IDENTIFIER '[' expr ']'
         | lit
         ;
 
 lit: 
-    LIT_INT
+    LIT_INT 
     | LIT_CHAR
     ;
 
@@ -135,4 +148,14 @@ int yyerror(const char *s) {
   fprintf(stderr, "Error: %s in line %d\n", s, getLineNumber());
   exit(3);
   return 3;
+}
+
+void print_ast(AST *ast, int depth) {
+    for (int i = 0; i < depth; i++) {
+        cout << "  ";
+    }
+    cout << ast->type << " " << ast->symbol->get_text() << endl;
+    for (int i = 0; i < ast->children.size(); i++) {
+        print_ast(ast->children[i], depth + 1);
+    }
 }
