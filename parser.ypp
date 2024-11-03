@@ -9,6 +9,7 @@
         int yyparse();
         int getLineNumber();
         int yyerror(const char *s);
+        string decompiled_text;
         
 
 %}
@@ -67,7 +68,7 @@
 %%
 
 program: 
-        dec_list { $$ = new AST(PROGRAM, *$1); /*$$->print_ast($$);*/ $$->ast_decompiler($$);  }
+        dec_list { $$ = new AST(PROGRAM, *$1); /*$$->print_ast($$);*/ decompiled_text = $$->ast_decompiler($$);  }
         ;
 
 dec_list : 

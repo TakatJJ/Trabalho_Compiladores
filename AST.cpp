@@ -1,187 +1,186 @@
-#pragma once
-
-
 #include "AST.hpp"
+#include <memory>
+#include <string>
+#include <vector>
 
-ofstream AST::file_decom("decompiled.txt");
+using namespace std;
 
-AST::AST(ASTNodeType type, Symbol *symbol) {
-            this->type = type;
-            this->symbol = symbol;
-        }
-AST::AST(ASTNodeType type, vector<AST*> children) {
-            this->type = type;
-            this->children = children;
-        }
-AST::AST(ASTNodeType type) {
-            this->type = type;
-        }
+AST::AST(ASTNodeType type, Symbol *symbol) : type(type), symbol(symbol) {}
+
+AST::AST(ASTNodeType type, vector<AST *> children)
+    : type(type), children(move(children)) {}
+
+AST::AST(ASTNodeType type) : type(type) {}
+
 AST::~AST() {
-        for (AST* child : children) {
-            delete child;
-        }
-        }
-string AST::ast_decompiler (AST *ast) {
-            if (ast == NULL) return "";
+  for (AST *child : children) {
+    delete child;
+  }
+  delete symbol;
+}
 
-            switch (ast->type) {
-                case ADD:{
-                    file_decom << ast_decompiler(ast->children[0]) << " + " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case SUB:{
-                    file_decom << ast_decompiler(ast->children[0]) << " - " << ast_decompiler(ast->children[1]);
-                    break;
-                }
+string AST::ast_decompiler(AST *ast) {
+  if (!ast)
+    return "";
 
-                case DIV:{
-                    file_decom << ast_decompiler(ast->children[0]) << " / " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case MULT:{
-                    file_decom << ast_decompiler(ast->children[0]) << " * " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case SYMBOL:
-                    return  ast->symbol->get_text();
-                case BIGGER:{
-                    file_decom << ast_decompiler(ast->children[0]) << " > " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case SMALLER:{
-                    file_decom << ast_decompiler(ast->children[0]) << " < " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case EQUAL:{
-                    file_decom << ast_decompiler(ast->children[0]) << " = " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case AND:{
-                    file_decom << ast_decompiler(ast->children[0]) << " & " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case OR:{
-                    file_decom << ast_decompiler(ast->children[0]) << " | " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case NOT:{
-                    file_decom << '~' << ast_decompiler(ast->children[0]);
-                    break;
-                }
-                case ASSIGN:{
-                    file_decom << ast_decompiler(ast->children[0]) << " = " << ast_decompiler(ast->children[1]);
-                    break;
-                }
-                case ASSIGN_VECTOR:{
-                    file_decom << ast_decompiler(ast->children[0]) << "[" <<  ast_decompiler(ast->children[1]) << "]" << " = " << ast_decompiler(ast->children[2]);
-                    break;
-                }
-                case RETURN:{
-                    file_decom << "return" << ast_decompiler(ast->children[0]) << ";" << endl;
-                    break;
-                }
-                    
-                case READ:{
-                    file_decom << "read" << ast_decompiler(ast->children[0]) << ";" << endl;
-                    break;
-                }
-                case WHILE:{
-                    file_decom << "while(" << ast_decompiler(ast->children[0]) << ")" << endl << ast_decompiler(ast->children[1]) << endl;
-                    break;
-                }
-                case IF:{
-                    file_decom << "if(" << ast_decompiler(ast->children[0]) << ")" << "then " << ast_decompiler(ast->children[1])   << endl;
-                    break;
-                }
-                case IF_ELSE:{
-                    file_decom << "if(" << ast_decompiler(ast->children[0]) << ")" << "then " << ast_decompiler(ast->children[1]) << endl << "else " << ast_decompiler(ast->children[2]) << endl;
-                    break;
-                }
-                case VECTOR:{    
-                    file_decom << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "]";
-                    break;
-                }
-                case INT:
-                    return"int";
-                case CHAR:
-                    return "char";
-                case BLOCK:{
-                        file_decom << "{";
-                     for( auto cmd : ast->children){
-                            file_decom << ast_decompiler(cmd) << endl;
-                     }
-                        file_decom << "}" << endl;
-                    break;
-
-            }
-
-               case FUNCALL:{
-                    file_decom << ast_decompiler(ast->children[0]) <<"(" << ast_decompiler(ast->children[1])<< ")";
-                    break;
-               }
-
-               case DEC_VECTOR:{
-                    file_decom << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "];" << endl;
-                    break;
-               }
-
-               case DEC_VECTOR_INIT:{
-                    file_decom << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "]" << "=" ;
-
-                   for(int i = 2; i < ast->children.size(); i++){
-                            file_decom << ast_decompiler(ast->children[i]);
-                    }
-
-                    file_decom << ";" << endl;
-                    break;
-               }
-               case DEC_VAR:{
-                    file_decom << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]) << " = " << ast_decompiler(ast->children[2]) << ";" << endl;
-                    break;
-               }
-
-               case PROGRAM:{
-
-                //    init_file();
-                    string program = ""; 
-                    for (auto cmd : ast->children){
-                        file_decom << ast_decompiler(cmd) << endl;
-                    }
-                    file_decom << "EOF" << endl;
-                    // close_file();
-                    return "";
-               }
-
-
-               case FUNC:{
-                    file_decom << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]) <<  "(" << ast_decompiler(ast->children[2]) << ")";
-                    file_decom << ast_decompiler(ast->children[3]);
-               }
-                   break;
-               case VAR:{
-                    file_decom << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]);
-               }
-                   break;
-
-               case INIT:{
-                    for (auto init : ast->children){
-                        file_decom << ast_decompiler(init) << "," << endl;
-                    }
-                    break;
-                    }
-
-               case PARAM:{
-                    for (auto param : ast->children){
-                        file_decom << ast_decompiler(param) << ", ";
-                    }
-                    break;
-               }
-                case ARG_LIST: {
-                    for (auto arg : ast->children){
-                        file_decom << ast_decompiler(arg) << ", ";
-                    }
-                    break;
-                }
-            } 
-            return "";          
-        }
+  string result;
+  switch (ast->type) {
+  case ADD:
+  case SUB:
+  case DIV:
+  case MULT:
+  case BIGGER:
+  case SMALLER:
+  case EQUAL:
+  case AND:
+  case OR: {
+    if (ast->children.size() < 2) {
+      // Handle
+      return "error";
+    }
+    string op = (ast->type == ADD)       ? " + "
+                : (ast->type == SUB)     ? " - "
+                : (ast->type == DIV)     ? " / "
+                : (ast->type == MULT)    ? " * "
+                : (ast->type == BIGGER)  ? " > "
+                : (ast->type == SMALLER) ? " < "
+                : (ast->type == EQUAL)   ? " = "
+                : (ast->type == AND)     ? " & "
+                                         : " | ";
+    result = ast_decompiler(ast->children[0]) + op +
+             ast_decompiler(ast->children[1]);
+    break;
+  }
+  case SYMBOL:
+    return ast->symbol->get_text();
+  case NOT:
+    result = "~" + ast_decompiler(ast->children[0]);
+    break;
+  case ASSIGN:
+    if (ast->children.size() < 2)
+      return "error";
+    result = ast_decompiler(ast->children[0]) + " = " +
+             ast_decompiler(ast->children[1]);
+    break;
+  case ASSIGN_VECTOR:
+    if (ast->children.size() < 3)
+      return "error";
+    result = ast_decompiler(ast->children[0]) + "[" +
+             ast_decompiler(ast->children[1]) +
+             "] = " + ast_decompiler(ast->children[2]);
+    break;
+  case RETURN:
+    result = "return " + ast_decompiler(ast->children[0]) + ";\n";
+    break;
+  case READ:
+    result = "read " + ast_decompiler(ast->children[0]) + ";\n";
+    break;
+  case WHILE:
+    if (ast->children.size() < 2)
+      return "error"; // Check size
+    result = "while(" + ast_decompiler(ast->children[0]) + ")\n" +
+             ast_decompiler(ast->children[1]) + "\n";
+    break;
+  case IF:
+    if (ast->children.size() < 2)
+      return "error"; // Check size
+    result = "if(" + ast_decompiler(ast->children[0]) + ")then " +
+             ast_decompiler(ast->children[1]) + "\n";
+    break;
+  case IF_ELSE:
+    if (ast->children.size() < 3)
+      return "error"; // Check size
+    result = "if(" + ast_decompiler(ast->children[0]) + ")then " +
+             ast_decompiler(ast->children[1]) + "\nelse " +
+             ast_decompiler(ast->children[2]) + "\n";
+    break;
+  case VECTOR:
+    if (ast->children.size() < 2)
+      return "error"; // Check size
+    result = ast_decompiler(ast->children[0]) + "[" +
+             ast_decompiler(ast->children[1]) + "]";
+    break;
+  case INT:
+    return "int";
+  case CHAR:
+    return "char";
+  case BLOCK: {
+    result = "{\n";
+    for (auto cmd : ast->children) {
+      result += ast_decompiler(cmd) + "\n";
+    }
+    result += "}\n";
+    break;
+  }
+  case FUNCALL:
+    if (ast->children.size() < 2)
+      return "error";
+    result = ast_decompiler(ast->children[0]) + "(" +
+             ast_decompiler(ast->children[1]) + ")";
+    break;
+  case DEC_VECTOR:
+    if (ast->children.size() < 2)
+      return "error";
+    result = ast_decompiler(ast->children[0]) + "[" +
+             ast_decompiler(ast->children[1]) + "];\n";
+    break;
+  case DEC_VECTOR_INIT: {
+    if (ast->children.size() < 2)
+      return "error";
+    result = ast_decompiler(ast->children[0]) + "[" +
+             ast_decompiler(ast->children[1]) + "] = ";
+    for (size_t i = 2; i < ast->children.size(); i++) {
+      result += ast_decompiler(ast->children[i]);
+    }
+    result += ";\n";
+    break;
+  }
+  case DEC_VAR:
+    if (ast->children.size() < 3)
+      return "error";
+    result = ast_decompiler(ast->children[0]) + " " +
+             ast_decompiler(ast->children[1]) + " = " +
+             ast_decompiler(ast->children[2]) + ";\n";
+    break;
+  case PROGRAM: {
+    for (auto cmd : ast->children) {
+      result += ast_decompiler(cmd) + "\n";
+    }
+    result += "EOF\n";
+    break;
+  }
+  case FUNC: {
+    if (ast->children.size() < 4)
+      return "error"; // Check size
+    result = ast_decompiler(ast->children[0]) + " " +
+             ast_decompiler(ast->children[1]) + "(" +
+             ast_decompiler(ast->children[2]) + ")";
+    result += ast_decompiler(ast->children[3]);
+    break;
+  }
+  case VAR: {
+    if (ast->children.size() < 2)
+      return "error"; // Check size
+    result = ast_decompiler(ast->children[0]) + " " +
+             ast_decompiler(ast->children[1]);
+    break;
+  }
+  case INIT: {
+    for (auto init : ast->children) {
+      result += ast_decompiler(init) + ",\n";
+    }
+    break;
+  }
+  case PARAM:
+  case ARG_LIST: {
+    for (auto arg : ast->children) {
+      result += ast_decompiler(arg) + ", ";
+    }
+    break;
+  }
+  case PRINT:
+    result = "PRINT";
+    break;
+  }
+  return result;
+}
