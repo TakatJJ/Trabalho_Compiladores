@@ -23,6 +23,7 @@
 %union {
         Symbol *symbol;
         AST *ast;
+        vector<AST*> *ast_list;
 }
 
 %token KW_CHAR          
@@ -40,12 +41,22 @@
 %token<symbol> LIT_STRING     
 %token TOKEN_ERROR    
 
+%type<ast> program
 %type<ast> lit
+%type<ast> vector
 %type<ast> expr
 %type<ast> cmd
 %type<ast> block
 %type<ast> dec
 %type<ast> type
+%type<ast_list> cmd_list
+%type<ast_list> print_list
+%type<ast_list> arg_list
+%type<ast_list> arg_list_tail
+%type<ast_list> lit_list
+%type<ast_list> param_list
+%type<ast_list> param_list_tail
+%type<ast_list> dec_list
 
 
 %left '+' '-'
@@ -56,35 +67,35 @@
 %%
 
 program: 
-        dec_list
+        dec_list { $$ = new AST(PROGRAM, *$1); /*$$->print_ast($$);*/ $$->ast_decompiler($$);  }
         ;
 
 dec_list : 
-        dec dec_list
-        | dec
+        dec dec_list { $$ = $2; $$->insert($$->begin(),$1); }
+        | dec { $$ = new vector<AST*>(1,$1); }
         ;
 dec: 
-     type TK_IDENTIFIER '=' lit ';' 
-   | type vector '=' lit_list ';'
-   | type vector ';'
-   | type TK_IDENTIFIER '(' param_list ')' block 
+     type TK_IDENTIFIER '=' lit ';' { $$ = new AST(DEC_VAR, {$1, new AST(SYMBOL,$2),$4});}
+   | type vector '=' lit_list ';'  { $$ = new AST(DEC_VECTOR_INIT, {$1, $2, new AST(INIT,*$4)});}
+   | type vector ';' { $$ = new AST(DEC_VECTOR, {$1, $2});}
+   | type TK_IDENTIFIER '(' param_list ')' block  { $$ = new AST(FUNC, {new AST(VAR,{$1, new AST(SYMBOL,$2)}), new AST(PARAM, *$4), $6}); }
         ;
 
-vector: TK_IDENTIFIER '[' LIT_INT ']' 
+vector: TK_IDENTIFIER '[' LIT_INT ']' { $$ = new AST(VECTOR, {new AST(SYMBOL,$1), new AST(SYMBOL,$3)});}
         ;
 
-lit_list: lit lit_list
-        | lit
+lit_list: lit lit_list  { $$ = $2; $$->insert($$->begin(), $1); }
+        | lit { $$ = new vector<AST*>(1,$1); }
         ;
 
 
 
 param_list: 
-        type TK_IDENTIFIER  param_list_tail
-        | 
+        type TK_IDENTIFIER  param_list_tail { $$ = $3; $$->insert($$->begin(),new AST(VAR, {$1,new AST(SYMBOL,$2)}));}
+        |  { $$ = new vector<AST*>(); }
         ;
         
-param_list_tail : ',' type TK_IDENTIFIER param_list_tail 
+param_list_tail : ',' type TK_IDENTIFIER param_list_tail  { $$ = $4; $$->insert($$->begin(),new AST(VAR, {$2,new AST(SYMBOL,$3)}));}
         | 
         ;
 
@@ -92,11 +103,11 @@ type: KW_INT { $$ = new AST(INT); }
     | KW_CHAR { $$ = new AST(CHAR); }
     ;
 
-block: '{' cmd_list '}' { $2->print_ast($2)}
+block: '{' cmd_list '}' { $$ = new AST(BLOCK, *$2);}
         ;
 
-cmd_list: cmd cmd_list
-        | 
+cmd_list: cmd cmd_list {$$ = $2; $$->insert($$->begin(),$1);}
+        |  cmd {$$ = new vector<AST*>(1,$1);}
         ;
 
 cmd:';'
@@ -104,7 +115,7 @@ cmd:';'
    | KW_IF '('expr')' KW_THEN cmd KW_ELSE cmd {$$ = new AST(IF_ELSE, {$3,$6,$8});}
    | KW_READ TK_IDENTIFIER ';' {$$ = new AST(READ, {new AST(SYMBOL,$2)});}
    | KW_RETURN expr ';' {$$ = new AST(RETURN, {$2});}
-   | KW_PRINT print_list ';' 
+   | KW_PRINT print_list ';' {$$ = new AST(PRINT, *$2);}
    | KW_WHILE '('expr')' cmd { $$ = new AST(WHILE, {$3,$5});}
    | block { $$ = $1;}
    | TK_IDENTIFIER '=' expr ';' {$$ = new AST(ASSIGN, {new AST(SYMBOL,$1),$3});}
@@ -124,7 +135,7 @@ expr:
         | expr '|' expr { $$ = new AST(OR, {$1,$3}); }
         | expr '~' expr { $$ = new AST(NOT, {$1,$3}); }
         | '(' expr ')' { $$ = $2; }
-        | TK_IDENTIFIER '(' arg_list ')'
+        | TK_IDENTIFIER '(' arg_list ')' { $$ = new AST(FUNCALL, {new AST(SYMBOL, $1),new AST(ARG_LIST, *$3)}) }
         | TK_IDENTIFIER  { $$ = new AST(SYMBOL, $1); }
         | TK_IDENTIFIER '[' expr ']' { $$ = new AST(VECTOR, {new AST(SYMBOL,$1),$3}); }
         | lit
@@ -135,20 +146,20 @@ lit:
     | LIT_CHAR { $$ = new AST(SYMBOL, $1); }
     ;
 
-print_list: expr print_list
-        | LIT_STRING print_list
-        | expr
-        | LIT_STRING
+print_list: expr print_list { $$ = $2; $$->insert($$->begin(),$1);}
+        | LIT_STRING print_list { $$ = $2; $$->insert($$->begin(),new AST(SYMBOL,$1));}
+        | expr { $$ = new vector<AST*>(1,$1); }
+        | LIT_STRING { $$ = new vector<AST*>(1,new AST(SYMBOL,$1)); }
         ;
 
 arg_list:
-        expr arg_list_tail
-        | 
+        expr arg_list_tail { $$ = $2; $$->insert($$->begin(),$1);}
+        |  { $$ = new vector<AST*>(); }
         ;
 
 arg_list_tail:
-        ',' expr arg_list_tail
-        | 
+        ',' expr arg_list_tail { $$ = $3; $$->insert($$->begin(),$2);}
+        | { $$ = new vector<AST*>(); }
         ;
 %%
 
