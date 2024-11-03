@@ -34,7 +34,7 @@
   if (symbols_table.find(yytext) == symbols_table.end()) {
     symbols_table[yytext] = Symbol(TK_IDENTIFIER, yytext);
   }
-
+  yylval.symbol = &symbols_table[yytext];
   return TK_IDENTIFIER;
 }
 
@@ -43,6 +43,7 @@
   if (symbols_table.find(yytext) == symbols_table.end()) {
     symbols_table[yytext] = Symbol(LIT_CHAR, yytext);
   }
+  yylval.symbol = &symbols_table[yytext];
   return LIT_CHAR;
 }
 
@@ -52,6 +53,7 @@
   if (symbols_table.find(yytext) == symbols_table.end()) {
     symbols_table[yytext] = Symbol(LIT_INT, yytext);
   }
+  yylval.symbol = &symbols_table[yytext];
   return LIT_INT;
 }
 
@@ -61,6 +63,7 @@
   if (symbols_table.find(yytext) == symbols_table.end()) {
     symbols_table[yytext] = Symbol(LIT_STRING, yytext);
   }
+  yylval.symbol = &symbols_table[yytext];
   return LIT_STRING;
 }
 

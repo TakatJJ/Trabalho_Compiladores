@@ -17,3 +17,5 @@ class Symbol {
     int get_type() { return this->type; }
     string get_text() { return this->text; }
   };
+
+  
