@@ -16,7 +16,7 @@
 %code requires 
 { 
 #include "Symbols.hpp"
-#include "AST.cpp" 
+#include "AST.hpp"
 
 }
 
@@ -135,7 +135,7 @@ expr:
         | expr '|' expr { $$ = new AST(OR, {$1,$3}); }
         | expr '~' expr { $$ = new AST(NOT, {$1,$3}); }
         | '(' expr ')' { $$ = $2; }
-        | TK_IDENTIFIER '(' arg_list ')' { $$ = new AST(FUNCALL, {new AST(SYMBOL, $1),new AST(ARG_LIST, *$3)}) }
+        | TK_IDENTIFIER '(' arg_list ')' { $$ = new AST(FUNCALL, {new AST(SYMBOL, $1),new AST(ARG_LIST, *$3)}); }
         | TK_IDENTIFIER  { $$ = new AST(SYMBOL, $1); }
         | TK_IDENTIFIER '[' expr ']' { $$ = new AST(VECTOR, {new AST(SYMBOL,$1),$3}); }
         | lit

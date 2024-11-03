@@ -3,19 +3,14 @@
 using namespace std;
 class Symbol {
 
-  private:
-    int type;
-    string text;
+private:
+  int type;
+  string text;
 
-  public:
-    Symbol() : type(0), text("") {}
-    Symbol(int type, string text) {
-      this->type = type;
-      this->text = text;
-    }
+public:
+  Symbol() : type(0), text("") {}
+  Symbol(int type, string text);
 
-    int get_type() { return this->type; }
-    string get_text() { return this->text; }
-  };
-
-  
+  int get_type();
+  string get_text();
+};
