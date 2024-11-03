@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <stdio.h>
 using namespace std;
 
 
@@ -14,10 +16,9 @@ extern FILE *yyin;
 int main(int argc, char *argv[]) {
   yyin = fopen(argv[1], "r");
   cout << "Token Text: " << argv[1] << " Number of files: " << argc << endl;
-  
+
   yyparse();
   cout << "Compilation finished successfully" << endl;
-
   printSymbolsTable();
   return 0;
 }

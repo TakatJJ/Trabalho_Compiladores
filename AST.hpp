@@ -1,9 +1,12 @@
+#pragma once
 #ifndef AST_HPP
 #define AST_HPP
 #include <vector>
 #include <iostream>
-#include "Symbols.hpp"
+#include <fstream>
 #include <string>
+#include "Symbols.hpp"
+#include "globals.cpp"
 using namespace std;
 
 enum ASTNodeType {
@@ -42,6 +45,9 @@ enum ASTNodeType {
     ARG_LIST
     };
 class AST {
+    private:
+        static ofstream file_decom;
+
     public:
         ASTNodeType type;
         Symbol *symbol;
@@ -63,249 +69,182 @@ class AST {
         }
         }
         static string ast_decompiler (AST *ast) {
-
             if (ast == NULL) return "";
 
             switch (ast->type) {
-                case ADD:
-                    cout << ast_decompiler(ast->children[0]) << " + " << ast_decompiler(ast->children[1]);
+                case ADD:{
+                    file_decom << ast_decompiler(ast->children[0]) << " + " << ast_decompiler(ast->children[1]);
                     break;
-                case SUB:
-                    cout << ast_decompiler(ast->children[0]) << " - " << ast_decompiler(ast->children[1]);
+                }
+                case SUB:{
+                    file_decom << ast_decompiler(ast->children[0]) << " - " << ast_decompiler(ast->children[1]);
                     break;
+                }
 
-                case DIV:
-                    cout << ast_decompiler(ast->children[0]) << " / " << ast_decompiler(ast->children[1]);
+                case DIV:{
+                    file_decom << ast_decompiler(ast->children[0]) << " / " << ast_decompiler(ast->children[1]);
                     break;
-                case MULT:
-                    cout << ast_decompiler(ast->children[0]) << " * " << ast_decompiler(ast->children[1]);
+                }
+                case MULT:{
+                    file_decom << ast_decompiler(ast->children[0]) << " * " << ast_decompiler(ast->children[1]);
                     break;
+                }
                 case SYMBOL:
                     return  ast->symbol->get_text();
+                case BIGGER:{
+                    file_decom << ast_decompiler(ast->children[0]) << " > " << ast_decompiler(ast->children[1]);
                     break;
-                case BIGGER:
-                    cout << ast_decompiler(ast->children[0]) << " > " << ast_decompiler(ast->children[1]);
+                }
+                case SMALLER:{
+                    file_decom << ast_decompiler(ast->children[0]) << " < " << ast_decompiler(ast->children[1]);
                     break;
-                case SMALLER:
-                    cout << ast_decompiler(ast->children[0]) << " < " << ast_decompiler(ast->children[1]);
+                }
+                case EQUAL:{
+                    file_decom << ast_decompiler(ast->children[0]) << " = " << ast_decompiler(ast->children[1]);
                     break;
-                case EQUAL:
-                    cout << ast_decompiler(ast->children[0]) << " = " << ast_decompiler(ast->children[1]);
+                }
+                case AND:{
+                    file_decom << ast_decompiler(ast->children[0]) << " & " << ast_decompiler(ast->children[1]);
                     break;
-                case AND:
-                    cout << ast_decompiler(ast->children[0]) << " & " << ast_decompiler(ast->children[1]);
+                }
+                case OR:{
+                    file_decom << ast_decompiler(ast->children[0]) << " | " << ast_decompiler(ast->children[1]);
                     break;
-                case OR:
-                    cout << ast_decompiler(ast->children[0]) << " | " << ast_decompiler(ast->children[1]);
+                }
+                case NOT:{
+                    file_decom << '~' << ast_decompiler(ast->children[0]);
                     break;
-                case NOT:
-                    cout << '~' << ast_decompiler(ast->children[0]);
+                }
+                case ASSIGN:{
+                    file_decom << ast_decompiler(ast->children[0]) << " = " << ast_decompiler(ast->children[1]);
                     break;
-                case ASSIGN:
-                    cout << ast_decompiler(ast->children[0]) << " = " << ast_decompiler(ast->children[1]);
+                }
+                case ASSIGN_VECTOR:{
+                    file_decom << ast_decompiler(ast->children[0]) << "[" <<  ast_decompiler(ast->children[1]) << "]" << " = " << ast_decompiler(ast->children[2]);
                     break;
-                case ASSIGN_VECTOR:
-                    cout << ast_decompiler(ast->children[0]) << "[" <<  ast_decompiler(ast->children[1]) << "]" << " = " << ast_decompiler(ast->children[2]);
+                }
+                case RETURN:{
+                    file_decom << "return" << ast_decompiler(ast->children[0]) << ";" << endl;
                     break;
-                case RETURN:
-                    cout << "return" << ast_decompiler(ast->children[0]) << ";" << endl;
+                }
+                    
+                case READ:{
+                    file_decom << "read" << ast_decompiler(ast->children[0]) << ";" << endl;
                     break;
-                case READ:
-                    cout << "read" << ast_decompiler(ast->children[0]) << ";" << endl;
+                }
+                case WHILE:{
+                    file_decom << "while(" << ast_decompiler(ast->children[0]) << ")" << endl << ast_decompiler(ast->children[1]) << endl;
                     break;
-                case WHILE:
-                    cout << "while(" << ast_decompiler(ast->children[0]) << ")" << endl << ast_decompiler(ast->children[1]) << endl;
+                }
+                case IF:{
+                    file_decom << "if(" << ast_decompiler(ast->children[0]) << ")" << "then " << ast_decompiler(ast->children[1])   << endl;
                     break;
-                case IF:
-                    cout << "if(" << ast_decompiler(ast->children[0]) << ")" << "then " << ast_decompiler(ast->children[1])   << endl;
+                }
+                case IF_ELSE:{
+                    file_decom << "if(" << ast_decompiler(ast->children[0]) << ")" << "then " << ast_decompiler(ast->children[1]) << endl << "else " << ast_decompiler(ast->children[2]) << endl;
                     break;
-                case IF_ELSE:
-                    cout << "if(" << ast_decompiler(ast->children[0]) << ")" << "then " << ast_decompiler(ast->children[1]) << endl << "else " << ast_decompiler(ast->children[2]) << endl;
+                }
+                case VECTOR:{    
+                    file_decom << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "]";
                     break;
-                case VECTOR:    
-                    cout << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "]";
-                    break;
+                }
                 case INT:
                     return"int";
-                    break;
                 case CHAR:
                     return "char";
-                    break;
-                case BLOCK:
-                     cout << "{";
+                case BLOCK:{
+                        file_decom << "{";
                      for( auto cmd : ast->children){
-                           cout << ast_decompiler(cmd) << endl;
+                            file_decom << ast_decompiler(cmd) << endl;
                      }
-                     cout << "}" << endl;
-
+                        file_decom << "}" << endl;
                     break;
 
-               case FUNCALL:
-                    cout << ast_decompiler(ast->children[0]) <<"(" << ast_decompiler(ast->children[1])<< ")";
-                     break;
+            }
 
-               case DEC_VECTOR:
-                    cout << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "];" << endl;
+               case FUNCALL:{
+                    file_decom << ast_decompiler(ast->children[0]) <<"(" << ast_decompiler(ast->children[1])<< ")";
                     break;
+               }
 
-               case DEC_VECTOR_INIT:
-                   cout << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "]" << "=" ;
+               case DEC_VECTOR:{
+                    file_decom << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "];" << endl;
+                    break;
+               }
+
+               case DEC_VECTOR_INIT:{
+                    file_decom << ast_decompiler(ast->children[0]) << "[" << ast_decompiler(ast->children[1]) << "]" << "=" ;
 
                    for(int i = 2; i < ast->children.size(); i++){
-                           cout << ast_decompiler(ast->children[i]);
+                            file_decom << ast_decompiler(ast->children[i]);
                     }
 
-                    cout << ";" << endl;
+                    file_decom << ";" << endl;
                     break;
-               case DEC_VAR:
-                    cout << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]) << " = " << ast_decompiler(ast->children[2]) << ";" << endl;
-                   break;
+               }
+               case DEC_VAR:{
+                    file_decom << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]) << " = " << ast_decompiler(ast->children[2]) << ";" << endl;
+                    break;
+               }
 
-               case PROGRAM:
+               case PROGRAM:{
 
-                    cout << ast->children.size() << endl;
-
+                   init_file();
                     string program = ""; 
                     for (auto cmd : ast->children){
-                        cout << ast_decompiler(cmd) << endl;
+                        file_decom << ast_decompiler(cmd) << endl;
                     }
-                    cout << "EOF" << endl;
+                    file_decom << "EOF" << endl;
+                    close_file();
                     return "";
+               }
+
+
+               case FUNC:{
+                    file_decom << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]) <<  "(" << ast_decompiler(ast->children[2]) << ")";
+                    file_decom << ast_decompiler(ast->children[3]);
+               }
+                   break;
+               case VAR:{
+                    file_decom << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]);
+               }
                    break;
 
-               case FUNC:
-                    cout << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]) <<  "(" << ast_decompiler(ast->children[2]) << ")";
-                    cout << ast_decompiler(ast->children[3]);
-                   break;
-               case VAR:
-                    cout << ast_decompiler(ast->children[0]) << " " << ast_decompiler(ast->children[1]);
-                   break;
-
-               case INIT:
+               case INIT:{
                     for (auto init : ast->children){
-                        cout << ast_decompiler(init) << "," << endl;
+                        file_decom << ast_decompiler(init) << "," << endl;
                     }
-                   break;
+                    break;
+                    }
 
-               case PARAM:
+               case PARAM:{
                     for (auto param : ast->children){
-                        cout << ast_decompiler(param) << ", ";
+                        file_decom << ast_decompiler(param) << ", ";
                     }
-                   break;
-                case ARG_LIST:
+                    break;
+               }
+                case ARG_LIST: {
                     for (auto arg : ast->children){
-                        cout << ast_decompiler(arg) << ", ";
+                        file_decom << ast_decompiler(arg) << ", ";
                     }
-                   break;
+                    break;
+                }
             } 
             return "";          
         }
-        
-        static void print_ast (AST *ast, int level = 0) {
-            if (ast == NULL) return;
-            for (int i = 0; i < level; i++) cout << "  " << level;
-            switch (ast->type) {
-                case ADD:
-                    cout << "ADD" << endl;
-                    break;
-                case SUB:
-                    cout << "SUB" << endl;
-                    break;
-                case DIV:
-                    cout << "DIV" << endl;
-                    break;
-                case MULT:
-                    cout << "MULT" << endl;
-                    break;
-                case SYMBOL:
-                    cout << "SYMBOL: " << ast->symbol->get_type() << ast->symbol->get_text() << endl;
-                    break;
-                case BIGGER:
-                    cout << "BIGGER" << endl;
-                    break;
-                case SMALLER:
-                    cout << "SMALLER" << endl;
-                    break;
-                case EQUAL:
-                    cout << "EQUAL" << endl;
-                    break;
-                case AND:
-                    cout << "AND" << endl;
-                    break;
-                case OR:
-                    cout << "OR" << endl;
-                    break;
-                case NOT:
-                    cout << "NOT" << endl;
-                    break;
-                case ASSIGN:
-                    cout << "ASSIGN" << endl;
-                    break;
-                case ASSIGN_VECTOR:
-                    cout << "ASSIGN_VECTOR" << endl;
-                    break;
-                case RETURN:
-                    cout << "RETURN" << endl;
-                    break;
-                case READ:
-                    cout << "READ" << endl;
-                    break;
-                case WHILE:
-                    cout << "WHILE" << endl;
-                    break;
-                case IF:
-                    cout << "IF" << endl;
-                    break;
-                case IF_ELSE:
-                    cout << "IF_ELSE" << endl;
-                    break;
-                case VECTOR:    
-                    cout << "VECTOR" << endl;
-                    break;
-                case INT:
-                    cout << "INT" << endl;
-                    break;
-                case CHAR:
-                    cout << "CHAR" << endl;
-                    break;
-                case BLOCK:
-                    cout << "BLOCK" << endl;
-                    break;
-                case FUNCALL:
-                    cout << "FUNCALL" << endl;
-                    break;
-                case DEC_VECTOR:
-                    cout << "DEC_VECTOR" << endl;
-                    break;
-                case DEC_VECTOR_INIT:
-                    cout << "DEC_VECTOR_INIT" << endl;
-                    break;
-                case DEC_VAR:  
-                    cout << "DEC_VAR" << endl;
-                    break;
-                case PROGRAM:
-                    cout << "PROGRAM" << endl;
-                    break;
-                case FUNC:
-                    cout << "FUNC" << endl;
-                    break;
-                case VAR:
-                    cout << "VAR" << endl;
-                    break;
-                case INIT:
-                    cout << "INIT" << endl;
-                    break;
-                case PARAM:
-                    cout << "PARAM" << endl;
-                    break;
-                case ARG_LIST:
-                    cout << "ARG_LIST" << endl;
-                    break;
-            }
-            for (AST* child : ast->children) {
-                print_ast(child, level + 1);
-            }
-        
+
+        static void init_file() {
+        file_decom.open("decompiler.txt");
+        if (!file_decom.is_open()) {
+            cout<< "Error opening file" << endl;
         }
+    }
+    static void close_file() {
+        if (file_decom.is_open()) {
+            file_decom.close();
+        }
+    }
+        
 };
+ofstream AST::file_decom("decompiled.txt");
 #endif

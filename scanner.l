@@ -1,9 +1,9 @@
 %{
 
-  #include "Symbols.hpp"
-  #include "parser.tab.hpp"
   #include <map>
   #include <string>
+  #include "Symbols.hpp"
+  #include "parser.tab.hpp"
   using namespace std;
 
   int isRunningConstant = 1;

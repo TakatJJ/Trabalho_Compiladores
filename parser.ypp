@@ -15,8 +15,8 @@
 
 %code requires 
 { 
-#include "AST.hpp" 
 #include "Symbols.hpp"
+#include "AST.hpp" 
 
 }
 
