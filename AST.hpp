@@ -55,5 +55,6 @@ public:
   AST(ASTNodeType type);
   ~AST();
   static string ast_decompiler(AST *ast);
+  static void print_ast(AST *ast, int level = 0);
 };
 #endif
