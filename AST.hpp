@@ -40,7 +40,8 @@ enum ASTNodeType {
   VAR,
   INIT,
   PARAM,
-  ARG_LIST
+  ARG_LIST,
+  EMPTY
 };
 class AST {
 private:

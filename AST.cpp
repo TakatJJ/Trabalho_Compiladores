@@ -118,6 +118,9 @@ void AST::print_ast (AST *ast, int level ) {
                 case ARG_LIST:
                     cout << "ARG_LIST" << endl;
                     break;
+                case EMPTY:
+                    cout << "EMPTY" << endl;
+                    break;
             }
             for (AST* child : ast->children) {
                 print_ast(child, level + 1);
@@ -278,6 +281,12 @@ string AST::ast_decompiler(AST *ast) {
     break;
   }
   case PARAM:
+    cout << "PARAM" << endl;
+    cout << ast->children.size() << endl;
+   for (auto param : ast->children) {
+      result += ast_decompiler(param) ;
+    }
+    break;
   case ARG_LIST: {
     for (auto arg : ast->children) {
       result += ast_decompiler(arg) + ", ";
@@ -285,8 +294,12 @@ string AST::ast_decompiler(AST *ast) {
     break;
   }
   case PRINT:
-    result = "PRINT";
+    result = "print " + ast_decompiler(ast->children[0]) + ";\n";
+    break;
+  case EMPTY:
+    result = ";";
     break;
   }
+  
   return result;
 }
