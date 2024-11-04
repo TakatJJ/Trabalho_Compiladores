@@ -259,7 +259,6 @@ string AST::ast_decompiler(AST *ast) {
     break;
   }
   case FUNC: {
-    cout << "FUNC" << ast->children.size() << endl;
     if (ast->children.size() < 3)
       return "error"; // Check size
     result = ast_decompiler(ast->children[0]) + " " +
@@ -281,15 +280,17 @@ string AST::ast_decompiler(AST *ast) {
     break;
   }
   case PARAM:
-    cout << "PARAM" << endl;
-    cout << ast->children.size() << endl;
-   for (auto param : ast->children) {
-      result += ast_decompiler(param) ;
-    }
+  if (ast->children.size() > 0)
+    result += ast_decompiler(ast->children[0]);
+  for (size_t i = 1; i < ast->children.size(); i++) {
+    result += ", " + ast_decompiler(ast->children[i]);
+  }
     break;
   case ARG_LIST: {
-    for (auto arg : ast->children) {
-      result += ast_decompiler(arg) + ", ";
+    if (ast->children.size() < 0)
+       result += ast_decompiler(ast->children[0]);
+    for (size_t i = 1; i < ast->children.size(); i++) {
+      result += ", " + ast_decompiler(ast->children[i]);
     }
     break;
   }
