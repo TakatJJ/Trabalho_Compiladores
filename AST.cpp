@@ -229,20 +229,28 @@ string AST::ast_decompiler(AST *ast) {
              ast_decompiler(ast->children[1]) + ")";
     break;
   case DEC_VECTOR:
+
     if (ast->children.size() < 2)
       return "error";
-    result = ast_decompiler(ast->children[0]) + "[" +
-             ast_decompiler(ast->children[1]) + "];\n";
+
+    result = ast_decompiler(ast->children[0]) + " " +
+             ast_decompiler(ast->children[1]) + ";\n";
     break;
+
   case DEC_VECTOR_INIT: {
+
     if (ast->children.size() < 2)
       return "error";
+
     result = ast_decompiler(ast->children[0]) + " " +
              ast_decompiler(ast->children[1]) + " = ";
+
     for (size_t i = 2; i < ast->children.size(); i++) {
       result += ast_decompiler(ast->children[i]);
     }
+
     result += ";\n";
+
     break;
   }
   case DEC_VAR:
@@ -276,7 +284,7 @@ string AST::ast_decompiler(AST *ast) {
   }
   case INIT: {
     for (auto init : ast->children) {
-      result += ast_decompiler(init) + ",\n";
+      result += ast_decompiler(init) + " ";
     }
     break;
   }
