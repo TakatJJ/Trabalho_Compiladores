@@ -107,8 +107,8 @@ type: KW_INT { $$ = new AST(INT); }
 block: '{' cmd_list '}' { $$ = new AST(BLOCK, *$2);}
         ;
 
-cmd_list: cmd cmd_list {$$ = $2; $$->insert($$->begin(),$1);}
-        |  cmd {$$ = new vector<AST*>(1,$1);}
+cmd_list:  {$$ = new vector<AST*>();}
+        |  cmd cmd_list {$$ = $2; $$->insert($$->begin(),$1);}
         ;
 
 cmd:';' { $$ = new AST(EMPTY); }

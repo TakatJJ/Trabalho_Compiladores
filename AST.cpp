@@ -168,16 +168,16 @@ string AST::ast_decompiler(AST *ast) {
     break;
   case ASSIGN:
     if (ast->children.size() < 2)
-      return "error";
+      return "assign error";
     result = ast_decompiler(ast->children[0]) + " = " +
-             ast_decompiler(ast->children[1]);
+             ast_decompiler(ast->children[1]) + ";";
     break;
   case ASSIGN_VECTOR:
     if (ast->children.size() < 3)
-      return "error";
+      return "assign vector error";
     result = ast_decompiler(ast->children[0]) + "[" +
              ast_decompiler(ast->children[1]) +
-             "] = " + ast_decompiler(ast->children[2]);
+             "] = " + ast_decompiler(ast->children[2]) + ";";
     break;
   case RETURN:
     result = "return " + ast_decompiler(ast->children[0]) + ";\n";
