@@ -187,26 +187,26 @@ string AST::ast_decompiler(AST *ast) {
     break;
   case WHILE:
     if (ast->children.size() < 2)
-      return "error"; // Check size
+      return "while error";
     result = "while(" + ast_decompiler(ast->children[0]) + ")\n" +
              ast_decompiler(ast->children[1]) + "\n";
     break;
   case IF:
     if (ast->children.size() < 2)
-      return "error"; // Check size
+      return "if error";
     result = "if(" + ast_decompiler(ast->children[0]) + ")then " +
              ast_decompiler(ast->children[1]) + "\n";
     break;
   case IF_ELSE:
     if (ast->children.size() < 3)
-      return "error"; // Check size
+      return "if else error";
     result = "if(" + ast_decompiler(ast->children[0]) + ")then " +
              ast_decompiler(ast->children[1]) + "\nelse " +
              ast_decompiler(ast->children[2]) + "\n";
     break;
   case VECTOR:
     if (ast->children.size() < 2)
-      return "error"; // Check size
+      return "vector error";
     result = ast_decompiler(ast->children[0]) + "[" +
              ast_decompiler(ast->children[1]) + "]";
     break;
@@ -255,7 +255,7 @@ string AST::ast_decompiler(AST *ast) {
   }
   case DEC_VAR:
     if (ast->children.size() < 3)
-      return "error";
+      return "dec var error";
     result = ast_decompiler(ast->children[0]) + " " +
              ast_decompiler(ast->children[1]) + " = " +
              ast_decompiler(ast->children[2]) + ";\n";
@@ -269,7 +269,7 @@ string AST::ast_decompiler(AST *ast) {
   }
   case FUNC: {
     if (ast->children.size() < 3)
-      return "error"; // Check size
+      return "func error";
     result = ast_decompiler(ast->children[0]) + " " + "(" +
              ast_decompiler(ast->children[1]) + ")";
     result += ast_decompiler(ast->children[2]);
@@ -277,7 +277,7 @@ string AST::ast_decompiler(AST *ast) {
   }
   case VAR: {
     if (ast->children.size() < 2)
-      return "error"; // Check size
+      return "var error";
     result = ast_decompiler(ast->children[0]) + " " +
              ast_decompiler(ast->children[1]);
     break;
@@ -309,7 +309,7 @@ string AST::ast_decompiler(AST *ast) {
   case PRINT:
 
     if (ast->children.size() < 0)
-      return "error_print_list";
+      return "print error";
 
     result += "print " + ast_decompiler(ast->children[0]);
 
