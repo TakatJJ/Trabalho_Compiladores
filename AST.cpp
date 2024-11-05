@@ -121,6 +121,11 @@ void AST::print_ast(AST *ast, int level) {
   case ARG_LIST:
     cout << "ARG_LIST" << endl;
     break;
+
+  case PRINT:
+    cout << "PRINT" << endl;
+    break;
+
   case EMPTY:
     cout << "EMPTY" << endl;
     break;
