@@ -264,7 +264,7 @@ string AST::ast_decompiler(AST *ast) {
     for (auto cmd : ast->children) {
       result += ast_decompiler(cmd) + "\n";
     }
-    result += "EOF\n";
+    result += "";
     break;
   }
   case FUNC: {
@@ -307,7 +307,17 @@ string AST::ast_decompiler(AST *ast) {
     break;
   }
   case PRINT:
-    result = "print " + ast_decompiler(ast->children[0]) + ";\n";
+
+    if (ast->children.size() < 0)
+      return "error_print_list";
+
+    result += "print " + ast_decompiler(ast->children[0]);
+
+    for (size_t i = 1; i < ast->children.size(); i++) {
+      result += " " + ast_decompiler(ast->children[i]);
+    }
+
+    result += ";\n";
     break;
   case EMPTY:
     result = ";";
