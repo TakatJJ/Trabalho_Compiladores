@@ -296,8 +296,11 @@ string AST::ast_decompiler(AST *ast) {
     }
     break;
   case ARG_LIST: {
+
     if (ast->children.size() < 0)
-      result += ast_decompiler(ast->children[0]);
+      return "error_arg_list";
+
+    result += ast_decompiler(ast->children[0]);
     for (size_t i = 1; i < ast->children.size(); i++) {
       result += ", " + ast_decompiler(ast->children[i]);
     }
