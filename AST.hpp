@@ -56,5 +56,6 @@ public:
   ~AST();
   static string ast_decompiler(AST *ast);
   static void print_ast(AST *ast, int level = 0);
+  static string ast_type_to_string(AST *ast);
 };
 #endif

@@ -19,12 +19,13 @@ using namespace std;
 
 class Symbol {
 
-private:
+
+  
+
+public:
   int type;
   int data_type;
   string text;
-
-public:
   Symbol() : type(0), text("") {}
   Symbol(int type, string text);
 

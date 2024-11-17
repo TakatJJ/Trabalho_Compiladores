@@ -321,3 +321,77 @@ string AST::ast_decompiler(AST *ast) {
 
   return result;
 }
+
+string AST::ast_type_to_string (AST* node) 
+{
+    switch (node->type)
+    {
+        case ADD:
+            return "ADD";
+        case SUB:
+            return "SUB";
+        case DIV:
+            return "DIV";
+        case MULT:
+            return "MULT";
+        case SYMBOL:
+            return "SYMBOL";
+        case BIGGER:
+            return "BIGGER";
+        case SMALLER:
+            return "SMALLER";
+        case EQUAL:
+            return "EQUAL";
+        case AND:
+            return "AND";
+        case OR:
+            return "OR";
+        case NOT:
+            return "NOT";
+        case ASSIGN:
+            return "ASSIGN";
+        case ASSIGN_VECTOR:
+            return "ASSIGN_VECTOR";
+        case RETURN:
+            return "RETURN";
+        case PRINT:
+            return "PRINT";
+        case READ:
+            return "READ";
+        case WHILE:
+            return "WHILE";
+        case IF:
+            return "IF";
+        case IF_ELSE:
+            return "IF_ELSE";
+        case VECTOR:
+            return "VECTOR";
+        case INT:
+            return "INT";
+        case CHAR:
+            return "CHAR";
+        case BLOCK:
+            return "BLOCK";
+        case FUNCALL:
+            return "FUNCALL";
+        case DEC_VECTOR:
+            return "DEC_VECTOR";
+        case DEC_VECTOR_INIT:
+            return "DEC_VECTOR_INIT";
+        case DEC_VAR:
+            return "DEC_VAR";
+        case PROGRAM:
+            return "PROGRAM";
+        case DEC_FUNC:
+            return "DEC_FUNC";
+        case INIT:
+            return "INIT";
+        case PARAM:
+            return "PARAM";
+        case ARG_LIST:
+            return "ARG_LIST";
+        case EMPTY:
+            return "EMPTY";
+    }
+    return "";
+}

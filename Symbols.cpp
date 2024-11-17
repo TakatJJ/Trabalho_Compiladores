@@ -3,6 +3,7 @@
 Symbol::Symbol(int type, string text) {
   this->type = type;
   this->text = text;
+  this->data_type = this->type == SYMBOL_LIT_INTEGER ? DATA_TYPE_INT : this->type == SYMBOL_LIT_CHAR ? DATA_TYPE_CHAR : 0;
 }
 
 int Symbol::get_type() { return this->type; }
