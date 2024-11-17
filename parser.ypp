@@ -69,7 +69,7 @@
 %%
 
 program: 
-        dec_list { $$ = new AST(PROGRAM, *$1);  /* $$->print_ast($$, 0); */decompiled_text = $$->ast_decompiler($$); check_program($$); }
+        dec_list { $$ = new AST(PROGRAM, *$1);   $$->print_ast($$, 0); decompiled_text = $$->ast_decompiler($$);  }
         ;
 
 dec_list : 
@@ -108,8 +108,8 @@ type: KW_INT { $$ = new AST(INT); }
 block: '{' cmd_list '}' { $$ = new AST(BLOCK, *$2);}
         ;
 
-cmd_list: cmd cmd_list {$$ = $2; $$->insert($$->begin(),$1);}
-        |  cmd {$$ = new vector<AST*>(1,$1);}
+cmd_list:  {$$ = new vector<AST*>();}
+        |  cmd cmd_list {$$ = $2; $$->insert($$->begin(),$1);}
         ;
 
 cmd:';' { $$ = new AST(EMPTY); }
@@ -130,8 +130,8 @@ expr:
         | expr '-' expr { $$ = new AST(SUB, {$1,$3}); }
         | expr '*' expr { $$ = new AST(MULT, {$1,$3}); }
         | expr '/' expr { $$ = new AST(DIV, {$1,$3}); }
-        | expr '<' expr { $$ = new AST(BIGGER, {$1,$3}); }
-        | expr '>' expr { $$ = new AST(SMALLER, {$1,$3}); }
+        | expr '<' expr { $$ = new AST(SMALLER, {$1,$3}); }
+        | expr '>' expr { $$ = new AST(BIGGER, {$1,$3}); }
         | expr '=' expr { $$ = new AST(EQUAL, {$1,$3}); }
         | expr '&' expr { $$ = new AST(AND, {$1,$3}); }
         | expr '|' expr { $$ = new AST(OR, {$1,$3}); }
