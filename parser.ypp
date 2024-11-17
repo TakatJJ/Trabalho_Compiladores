@@ -4,6 +4,7 @@
         #include <iostream>
         #include <map>
         #include <string>
+        #include "semantic.hpp"
         using namespace std;
         int yylex ();
         int yyparse();
@@ -68,7 +69,7 @@
 %%
 
 program: 
-        dec_list { $$ = new AST(PROGRAM, *$1);  /* $$->print_ast($$, 0); */decompiled_text = $$->ast_decompiler($$);  }
+        dec_list { $$ = new AST(PROGRAM, *$1);  /* $$->print_ast($$, 0); */decompiled_text = $$->ast_decompiler($$); check_program($$); }
         ;
 
 dec_list : 
@@ -79,7 +80,7 @@ dec:
      type TK_IDENTIFIER '=' lit ';' { $$ = new AST(DEC_VAR, {$1, new AST(SYMBOL,$2),$4});}
    | type vector '=' lit_list ';'  { $$ = new AST(DEC_VECTOR_INIT, {$1, $2, new AST(INIT,*$4)});}
    | type vector ';' { $$ = new AST(DEC_VECTOR, {$1, $2});}
-   | type TK_IDENTIFIER '(' param_list ')' block  { $$ = new AST(FUNC, {new AST(VAR,{$1, new AST(SYMBOL,$2)}), new AST(PARAM, *$4), $6}); /* $$->print_ast(new AST(PARAM, *$4), 0); */ }
+   | type TK_IDENTIFIER '(' param_list ')' block  { $$ = new AST(DEC_FUNC, {$1, new AST(SYMBOL,$2), new AST(PARAM, *$4), $6}); /* $$->print_ast(new AST(PARAM, *$4), 0); */ }
         ;
 
 vector: TK_IDENTIFIER '[' LIT_INT ']' { $$ = new AST(VECTOR, {new AST(SYMBOL,$1), new AST(SYMBOL,$3)});}
@@ -92,11 +93,11 @@ lit_list: lit lit_list  { $$ = $2; $$->insert($$->begin(), $1); }
 
 
 param_list: 
-        type TK_IDENTIFIER  param_list_tail { $$ = $3; $$->insert($$->begin(), new AST(VAR,{$1, new AST(SYMBOL,$2)})); }
+        type TK_IDENTIFIER  param_list_tail { $$ = $3; $$->insert($$->begin(), new AST(PARAM,{$1, new AST(SYMBOL,$2)})); }
         |  { $$ = new vector<AST*>(); }
         ;
         
-param_list_tail : ',' type TK_IDENTIFIER param_list_tail  { $$ = $4; $$->insert($$->begin(), new AST(VAR,{$2, new AST(SYMBOL,$3)})); }
+param_list_tail : ',' type TK_IDENTIFIER param_list_tail  { $$ = $4; $$->insert($$->begin(), new AST(PARAM,{$2, new AST(SYMBOL,$3)})); }
         | { $$ = new vector<AST*>(); }
         ;
 
