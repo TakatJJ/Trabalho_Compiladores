@@ -36,8 +36,7 @@ enum ASTNodeType {
   DEC_VECTOR_INIT,
   DEC_VAR,
   PROGRAM,
-  FUNC,
-  VAR,
+  DEC_FUNC,
   INIT,
   PARAM,
   ARG_LIST,
@@ -57,5 +56,6 @@ public:
   ~AST();
   static string ast_decompiler(AST *ast);
   static void print_ast(AST *ast, int level = 0);
+  static string ast_type_to_string(AST *ast);
 };
 #endif
