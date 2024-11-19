@@ -366,6 +366,22 @@ std::pair<int, int> type_infer(AST *node) {
   }
 
   case ASTNodeType::VECTOR:
+     std::pair<int, int> id = type_infer(node->children[0]);
+
+     if(id.first != SYMBOL_VEC){
+       fprintf(stderr," Not a vec.\n");
+       exit(4);
+     }
+     
+      std::pair<int, int> expr = type_infer(node->children[1]);
+      if(!IntegerOrChar(expr.second)){
+       fprintf(stderr,"Not into compatible indexing vector\n");
+       exit(4);
+      }
+
+
+     return id;
+
   case ASTNodeType::INT:
   case ASTNodeType::CHAR:
   case ASTNodeType::DEC_VECTOR:
