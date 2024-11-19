@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 
-int semantic_errors = 0;
-
 void check_semantic(AST *node) {
   check_and_set_declarations(node);
   check_undeclared(node);
@@ -24,7 +22,7 @@ void check_and_set_declarations(AST *node) {
       cout << "Semantic error: variable "
            << node->children[1]->symbol->get_text() << " already declared"
            << endl;
-      semantic_errors++;
+      exit(4);
     } else {
       cout << "Variable " << node->children[1]->symbol->get_text()
            << " declared" << endl;
@@ -40,7 +38,7 @@ void check_and_set_declarations(AST *node) {
         cout << "Semantic error: variable "
              << node->children[1]->symbol->get_text()
              << " declared with incompatible data type" << endl;
-        semantic_errors++;
+        exit(4);
       }
     }
 
@@ -50,7 +48,7 @@ void check_and_set_declarations(AST *node) {
       cout << "Semantic error: function "
            << node->children[1]->symbol->get_text() << " already declared"
            << endl;
-      semantic_errors++;
+      exit(4);
     } else {
       cout << "Function " << node->children[1]->symbol->get_text()
            << " declared" << endl;
@@ -72,14 +70,15 @@ void check_and_set_declarations(AST *node) {
       cout << "Semantic error: vector "
            << node->children[1]->children[0]->symbol->get_text()
            << " already declared" << endl;
-      semantic_errors++;
+      exit(4);
     } else {
       cout << "Vector " << node->children[1]->children[0]->symbol->get_text()
            << " declared" << endl;
 
       node->children[1]->children[0]->symbol->set_type(SYMBOL_VEC);
       node->children[1]->children[0]->symbol->vector_size =
-          int(node->children[1]->children[1]->symbol->get_text().c_str());
+          removeStartingSymbol(
+              node->children[1]->children[1]->symbol->get_text());
 
       if (node->children[0]->type == ASTNodeType::INT) {
         node->children[1]->children[0]->symbol->set_data_type(DATA_TYPE_INT);
@@ -94,7 +93,7 @@ void check_and_set_declarations(AST *node) {
       cout << "Semantic error: vector "
            << node->children[1]->children[0]->symbol->get_text()
            << " already declared" << endl;
-      semantic_errors++;
+      exit(4);
     } else {
       cout << "Vector " << node->children[1]->children[0]->symbol->get_text()
            << " declared" << endl;
@@ -104,10 +103,10 @@ void check_and_set_declarations(AST *node) {
         cout << "Semantic error: vector "
              << node->children[1]->children[0]->symbol->get_text()
              << " declared with incompatible size" << endl;
-        semantic_errors++;
+        exit(4);
       }
       node->children[1]->children[0]->symbol->vector_size =
-          int(node->children[1]->children[1]->symbol->get_text().c_str());
+          stoi(node->children[1]->children[1]->symbol->get_text().c_str());
 
       if (node->children[0]->type == ASTNodeType::INT) {
         node->children[1]->children[0]->symbol->set_data_type(DATA_TYPE_INT);
@@ -120,7 +119,7 @@ void check_and_set_declarations(AST *node) {
         cout << "Semantic error: vector "
              << node->children[1]->children[0]->symbol->get_text()
              << " declared with incompatible data type" << endl;
-        semantic_errors++;
+        exit(4);
       }
     }
     break;
@@ -129,7 +128,7 @@ void check_and_set_declarations(AST *node) {
       cout << "Semantic error: parameter "
            << node->children[1]->symbol->get_text() << " already declared"
            << endl;
-      semantic_errors++;
+      exit(4);
     } else {
       cout << "Parameter " << node->children[1]->symbol->get_text()
            << " declared" << endl;
@@ -140,8 +139,8 @@ void check_and_set_declarations(AST *node) {
         node->children[1]->symbol->set_data_type(DATA_TYPE_CHAR);
       }
     }
+    break;
   }
-
   for (AST *child : node->children) {
     check_and_set_declarations(child);
   }
@@ -149,6 +148,7 @@ void check_and_set_declarations(AST *node) {
 
 void check_undeclared(AST *node) {
   cout << "Checking node " << node->ast_type_to_string(node) << endl;
+
   if (node == nullptr)
     return;
 
@@ -156,7 +156,7 @@ void check_undeclared(AST *node) {
     if (node->symbol->get_type() == SYMBOL_IDENTIFIER) {
       cout << "Semantic error: undeclared identifier "
            << node->symbol->get_text() << endl;
-      semantic_errors++;
+      exit(4);
     }
   }
 
@@ -193,15 +193,19 @@ bool checkVectorElements(AST *node, int data_type) {
 }
 
 bool checkVectorSizeInit(AST *node) {
-  if (int(node->children[1]->symbol->get_text().c_str()) !=
+  if (stoi(node->children[1]->symbol->get_text().c_str()) !=
       (int)node->children[2]->children.size())
     return false;
   else
     return true;
 }
 
+int removeStartingSymbol(string s) {
+  s = s.substr(1);
+  return stoi(s);
+}
 std::pair<int, int> type_infer(AST *node) {
-
+  cout << "Checking node in INFER:" << node->ast_type_to_string(node) << endl;
   ASTNodeType node_type = node->type;
 
   switch (node_type) {
@@ -240,10 +244,8 @@ std::pair<int, int> type_infer(AST *node) {
     std::pair<int, int> left = type_infer(node->children[0]);
     std::pair<int, int> right = type_infer(node->children[1]);
 
-    if (left.second == DATA_TYPE_BOOL && right.second == DATA_TYPE_BOOL) {
-      return std::make_pair(0,
-                            DATA_TYPE_BOOL); // Logical operations return bool
-    }
+    if (left.second == DATA_TYPE_BOOL && right.second == DATA_TYPE_BOOL)
+      return std::make_pair(0, DATA_TYPE_BOOL);
 
     fprintf(stderr, "Logical operations require boolean operands.\n");
     exit(4);
@@ -301,7 +303,7 @@ std::pair<int, int> type_infer(AST *node) {
     std::pair<int, int> expr = type_infer(node->children[0]);
 
     if (IntegerOrChar(expr.second)) {
-      return std::make_pair(0, 0); // Return type of the expression
+      return std::make_pair(0, 0);
     }
 
     fprintf(stderr, "Return type must be integer or char.\n");
@@ -309,8 +311,8 @@ std::pair<int, int> type_infer(AST *node) {
   }
 
   case ASTNodeType::PRINT:
-    // Assuming this case handles literal printing (strings, etc.)
-    return std::make_pair(0, 0); // Print has no return value
+    // String
+    return std::make_pair(0, 0);
 
   case ASTNodeType::READ: {
     std::pair<int, int> child = type_infer(node->children[0]);
@@ -320,8 +322,7 @@ std::pair<int, int> type_infer(AST *node) {
       exit(4);
     }
 
-    return std::make_pair(0,
-                          0); // Return type is void (no return value for READ)
+    return std::make_pair(0, 0);
   }
 
   case ASTNodeType::WHILE: {
@@ -372,13 +373,10 @@ std::pair<int, int> type_infer(AST *node) {
     return std::make_pair(0, 0); // Return types as needed
 
   case ASTNodeType::BLOCK: {
-    // Iterate over all commands in the block
     for (auto cmd : node->children) {
       std::pair<int, int> result = type_infer(cmd);
-      // You might want to collect the types from each statement here,
-      // or check if there's an overall issue with types in the block.
     }
-    return std::make_pair(0, 0); // Return void for block
+    return std::make_pair(0, 0);
   }
 
   case ASTNodeType::FUNCALL: {

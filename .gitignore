@@ -1,6 +1,8 @@
 *.o
 etapa1
 etapa2
+etapa3
+etapa4
 lex.yy.cpp
 *.bat
 compac
@@ -8,4 +10,3 @@ compac
 *.tab.cpp
 *.tab.hpp
 *.output
-Makefile
