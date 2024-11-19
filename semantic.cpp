@@ -313,7 +313,8 @@ std::pair<int, int> type_infer(AST *node) {
   }
 
   case ASTNodeType::PRINT:
-    // String
+    for(auto p : node->children)
+         type_infer(p);
     return std::make_pair(0, 0);
 
   case ASTNodeType::READ: {
