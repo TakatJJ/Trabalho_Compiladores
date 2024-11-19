@@ -402,7 +402,6 @@ std::pair<int, int> type_infer(AST *node) {
   case ASTNodeType::VECTOR:{
      std::pair<int, int> id = type_infer(node->children[0]);
 
-
      if(id.first != SYMBOL_VEC){
        fprintf(stderr," Not a vec.\n");
        exit(4);
