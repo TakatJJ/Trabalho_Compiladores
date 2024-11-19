@@ -3,7 +3,7 @@
 #include "semantic.hpp"
 #include "Symbols.hpp"
 
-int semantic_errors = 0;
+
 
 void check_semantic(AST* node) {
     check_and_set_declarations(node);
@@ -21,7 +21,7 @@ void check_and_set_declarations(AST* node) {
         case ASTNodeType::DEC_VAR:
             if (node->children[1]->symbol->type != SYMBOL_IDENTIFIER){
                 cout << "Semantic error: variable " << node->children[1]->symbol->get_text() << " already declared" << endl;
-                semantic_errors++;
+                exit(4);
             }
             else
             {
@@ -39,7 +39,7 @@ void check_and_set_declarations(AST* node) {
                 if(!DatatypeCompatible(node->children[1]->symbol->get_data_type(),node->children[2]->symbol->get_data_type()))
                 {
                     cout << "Semantic error: variable " << node->children[1]->symbol->get_text() << " declared with incompatible data type" << endl;
-                    semantic_errors++;
+                    exit(4);
                 }
             }
                 
@@ -47,7 +47,7 @@ void check_and_set_declarations(AST* node) {
         case ASTNodeType::DEC_FUNC:
             if (node->children[1]->symbol->get_type() != SYMBOL_IDENTIFIER){
                 cout << "Semantic error: function " << node->children[1]->symbol->get_text() << " already declared" << endl;
-                semantic_errors++;
+                exit(4);
             }
             else
             {
@@ -69,14 +69,14 @@ void check_and_set_declarations(AST* node) {
         case ASTNodeType::DEC_VECTOR:
             if (node->children[1]->children[0]->symbol->get_type() != SYMBOL_IDENTIFIER){
                 cout << "Semantic error: vector " << node->children[1]->children[0]->symbol->get_text() << " already declared" << endl;
-                semantic_errors++;
+                exit(4);
             }
             else
             {
                 cout << "Vector " << node->children[1]->children[0]->symbol->get_text() << " declared" << endl;
 
                 node->children[1]->children[0]->symbol->set_type(SYMBOL_VEC);
-                node->children[1]->children[0]->symbol->vector_size = int(node->children[1]->children[1]->symbol->get_text().c_str());
+                node->children[1]->children[0]->symbol->vector_size = removeStartingSymbol(node->children[1]->children[1]->symbol->get_text());
                 
                 if (node->children[0]->type == ASTNodeType::INT)
                 {
@@ -93,7 +93,7 @@ void check_and_set_declarations(AST* node) {
         case ASTNodeType::DEC_VECTOR_INIT:
             if (node->children[1]->children[0]->symbol->get_type() != SYMBOL_IDENTIFIER){
                 cout << "Semantic error: vector " << node->children[1]->children[0]->symbol->get_text() << " already declared" << endl;
-                semantic_errors++;
+                exit(4);
             }
             else
             {
@@ -103,7 +103,7 @@ void check_and_set_declarations(AST* node) {
                 if (!checkVectorSizeInit(node))
                 {
                     cout << "Semantic error: vector " << node->children[1]->children[0]->symbol->get_text() << " declared with incompatible size" << endl;
-                    semantic_errors++;
+                    exit(4);
                 }
                 node->children[1]->children[0]->symbol->vector_size = int(node->children[1]->children[1]->symbol->get_text().c_str());
                 
@@ -118,7 +118,7 @@ void check_and_set_declarations(AST* node) {
                 if(!checkVectorElements(node->children[2], node->children[1]->children[0]->symbol->get_data_type()))
                 {
                     cout << "Semantic error: vector " << node->children[1]->children[0]->symbol->get_text() << " declared with incompatible data type" << endl;
-                    semantic_errors++;
+                    exit(4);
                 }
 
             }
@@ -126,7 +126,7 @@ void check_and_set_declarations(AST* node) {
         case ASTNodeType::PARAM:
             if(node->children[1]->symbol->get_type() != SYMBOL_IDENTIFIER){
                 cout << "Semantic error: parameter " << node->children[1]->symbol->get_text() << " already declared" << endl;
-                semantic_errors++;
+                exit(4);
             }
             else
             {
@@ -159,7 +159,7 @@ void check_undeclared(AST* node)
         if (node->symbol->get_type() == SYMBOL_IDENTIFIER)
         {
             cout << "Semantic error: undeclared identifier " << node->symbol->get_text() << endl;
-            semantic_errors++;
+            exit(4);
         }
     }
 
@@ -195,12 +195,19 @@ bool checkVectorElements(AST* node, int data_type){
 }
 
 bool checkVectorSizeInit(AST* node){
-    if (int(node->children[1]->symbol->get_text().c_str()) != node->children[2]->children.size())
+    cout << node->children[2]->children.size() << endl;
+    if (removeStartingSymbol(node->children[1]->children[1]->symbol->get_text()) != node->children[2]->children.size())
         return false;
     else
         return true;
 }
+
+int removeStartingSymbol(string s){
+    s = s.substr(1);
+    return stoi(s);
+}
 std::pair<int, int> type_infer(AST* node) {
+    cout<< "Checking node in INFER:" << node->ast_type_to_string(node) << endl;
     ASTNodeType node_type = node->type;
 
     switch (node_type) {
@@ -406,7 +413,8 @@ std::pair<int, int> type_infer(AST* node) {
             return std::make_pair(0, 0); // Return void for program
         }
 
-        case DEC_FUNC: 
+        case DEC_FUNC:
+            type_infer(node->children[3]);
             return std::make_pair(0, 0); // Declare function
 
         case ARG_LIST: {

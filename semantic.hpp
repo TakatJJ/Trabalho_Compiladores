@@ -13,5 +13,6 @@ bool DatatypeCompatible(int datatype1, int datatype2);
 bool IntegerOrChar(int datatype);
 bool checkVectorElements(AST* node, int datatype);
 bool checkVectorSizeInit(AST* node);
+int removeStartingSymbol(string s);
 void handleCommands(AST* node);
 pair<int,int> type_infer(AST *node);
