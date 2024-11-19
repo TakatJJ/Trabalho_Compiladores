@@ -207,24 +207,29 @@ int removeStartingSymbol(string s) {
   return stoi(s);
 }
 
-bool valid_id(std::pair<int,int> expr, AST *p){
+bool valid_id(std::pair<int, int> expr, AST *p) {
 
-	 if(expr.first == SYMBOL_VEC && !(p->type == VECTOR)){
-	    fprintf(stderr, "VEC NOT INDEXED:%d second: %d\n", expr.first, expr.second);
-	    exit(4);
-	 }
+  if (expr.first == SYMBOL_VEC && !(p->type == VECTOR)) {
+    fprintf(stderr, "VEC NOT INDEXED:%d second: %d\n", expr.first, expr.second);
+    exit(4);
+  }
 
-	 if(expr.first == SYMBOL_FUNC && !(p->type == FUNCALL)){
-	    fprintf(stderr, "FUNC ISOLED:%d second: %d\n", expr.first, expr.second);
-	    exit(4);
-	 }
- return true;
+  if (expr.first == SYMBOL_FUNC && !(p->type == FUNCALL)) {
+    fprintf(stderr, "FUNC ISOLED:%d second: %d\n", expr.first, expr.second);
+    exit(4);
+  }
+  return true;
 }
 std::pair<int, int> type_infer(AST *node) {
   cout << "Checking node in INFER:" << node->ast_type_to_string(node) << endl;
   ASTNodeType node_type = node->type;
 
   switch (node_type) {
+
+  case ASTNodeType::SYMBOL:
+    return std::make_pair(node->symbol->type, node->symbol->data_type);
+
+  // Arithmetic expressions
   case ASTNodeType::ADD:
   case ASTNodeType::SUB:
   case ASTNodeType::DIV:
@@ -242,10 +247,7 @@ std::pair<int, int> type_infer(AST *node) {
     exit(4);
   }
 
-  case ASTNodeType::SYMBOL:
-
-    return std::make_pair(node->symbol->type, node->symbol->data_type);
-
+  // Comparasion expressions
   case ASTNodeType::BIGGER:
   case ASTNodeType::SMALLER:
   case ASTNodeType::EQUAL: {
@@ -262,6 +264,7 @@ std::pair<int, int> type_infer(AST *node) {
     exit(4);
   }
 
+  // Boolean expressions
   case ASTNodeType::AND:
   case ASTNodeType::OR: {
     std::pair<int, int> left = type_infer(node->children[0]);
@@ -298,7 +301,7 @@ std::pair<int, int> type_infer(AST *node) {
     valid_id(right, node->children[1]);
 
     if (IntegerOrChar(right.second)) {
-      return left;
+      return std::make_pair(0, 0);
     }
 
     fprintf(stderr, "Cannot assign non-integer or non-char type.\n");
@@ -326,7 +329,7 @@ std::pair<int, int> type_infer(AST *node) {
 
   case ASTNodeType::RETURN: {
     std::pair<int, int> expr = type_infer(node->children[0]);
-	
+
     valid_id(expr, node->children[0]);
 
     if (IntegerOrChar(expr.second)) {
@@ -337,17 +340,17 @@ std::pair<int, int> type_infer(AST *node) {
     exit(4);
   }
 
-  case ASTNodeType::PRINT:{
-    for(auto p : node->children){
-	   
-         std::pair<int,int> expr = type_infer(p);
-	 if(!((expr.first == SYMBOL_LIT_STRING) || IntegerOrChar(expr.second))){
-	    fprintf(stderr, "NOT LIT STRING OR INT OR CHAR first:%d second: %d\n", expr.first, expr.second);
-	    exit(4);
-	 }
+  case ASTNodeType::PRINT: {
+    for (auto p : node->children) {
 
-	 valid_id(expr, p);
+      std::pair<int, int> expr = type_infer(p);
+      if (!((expr.first == SYMBOL_LIT_STRING) || IntegerOrChar(expr.second))) {
+        fprintf(stderr, "NOT LIT STRING OR INT OR CHAR first:%d second: %d\n",
+                expr.first, expr.second);
+        exit(4);
+      }
 
+      valid_id(expr, p);
     }
     return std::make_pair(0, 0);
   }
@@ -399,31 +402,22 @@ std::pair<int, int> type_infer(AST *node) {
     exit(4);
   }
 
-  case ASTNodeType::VECTOR:{
-     std::pair<int, int> id = type_infer(node->children[0]);
+  case ASTNodeType::VECTOR: {
+    std::pair<int, int> id = type_infer(node->children[0]);
 
-     if(id.first != SYMBOL_VEC){
-       fprintf(stderr," Not a vec.\n");
-       exit(4);
-     }
-     
-      std::pair<int, int> expr = type_infer(node->children[1]);
-      if(!IntegerOrChar(expr.second)){
-       fprintf(stderr,"Not into compatible indexing vector\n");
-       exit(4);
-      }
+    if (id.first != SYMBOL_VEC) {
+      fprintf(stderr, " Not a vec.\n");
+      exit(4);
+    }
 
+    std::pair<int, int> expr = type_infer(node->children[1]);
+    if (!IntegerOrChar(expr.second)) {
+      fprintf(stderr, "Not into compatible indexing vector\n");
+      exit(4);
+    }
 
-     return id;
-   }
-  case ASTNodeType::INT:
-  case ASTNodeType::CHAR:
-  case ASTNodeType::DEC_VECTOR:
-  case ASTNodeType::DEC_VECTOR_INIT:
-  case ASTNodeType::DEC_VAR:
-  case ASTNodeType::INIT:
-  case ASTNodeType::PARAM:
-    return std::make_pair(0, 0); // Return types as needed
+    return id;
+  }
 
   case ASTNodeType::BLOCK: {
     for (auto cmd : node->children) {
@@ -435,7 +429,6 @@ std::pair<int, int> type_infer(AST *node) {
   case ASTNodeType::FUNCALL: {
     std::pair<int, int> id = type_infer(node->children[0]);
 
-    cout << "teste 1" << endl;
     if (id.first != SYMBOL_FUNC) {
       fprintf(stderr, "Function call must refer to a function.\n");
       exit(4);
@@ -443,12 +436,11 @@ std::pair<int, int> type_infer(AST *node) {
 
     Symbol *fun_symbol = node->children[0]->symbol;
 
-    cout << "teste 2" << endl;
     if (fun_symbol->param_count != (int)node->children[1]->children.size()) {
       fprintf(stderr, "Invalid argument number for function call.\n");
       exit(4);
     }
-    cout << "teste 3" << endl;
+
     std::pair<int, int> arg_list = type_infer(node->children[1]);
     return std::make_pair(SYMBOL_FUNC,
                           fun_symbol->data_type); // Return function type
@@ -467,16 +459,14 @@ std::pair<int, int> type_infer(AST *node) {
     return std::make_pair(0, 0); // Declare function
 
   case ASTNodeType::ARG_LIST: {
+
     for (auto cmd : node->children) {
-    cout << "teste 4" << endl;
       std::pair<int, int> arg = type_infer(cmd);
 
       if (!IntegerOrChar(arg.second)) {
         fprintf(stderr, "Invalid parameter type.\n");
         exit(4);
       }
-
-    cout << "teste 5" << endl;
     }
     return std::make_pair(0, 0); // Return type for argument list
   }
@@ -484,6 +474,16 @@ std::pair<int, int> type_infer(AST *node) {
   case ASTNodeType::EMPTY:
     return std::make_pair(0, 0); // Empty statement has no effect
 
+  // Definitons handled in check_and_set_declarations
+  case ASTNodeType::INT:
+  case ASTNodeType::CHAR:
+  case ASTNodeType::DEC_VECTOR:
+  case ASTNodeType::DEC_VECTOR_INIT:
+  case ASTNodeType::DEC_VAR:
+  case ASTNodeType::INIT:
+  case ASTNodeType::PARAM:
+    return std::make_pair(0, 0); // Return types as needed
+                                 //
   default:
     fprintf(stderr, "Unknown AST node type.\n");
     return std::make_pair(-1, -1); // Error case
