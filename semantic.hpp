@@ -16,3 +16,4 @@ bool checkVectorSizeInit(AST* node);
 int removeStartingSymbol(string s);
 void handleCommands(AST* node);
 pair<int,int> type_infer(AST *node);
+bool valid_id(std::pair<int,int> expr, AST *p);
