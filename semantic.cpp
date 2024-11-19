@@ -106,7 +106,8 @@ void check_and_set_declarations(AST *node) {
         exit(4);
       }
       node->children[1]->children[0]->symbol->vector_size =
-          stoi(node->children[1]->children[1]->symbol->get_text().c_str());
+          removeStartingSymbol(
+              node->children[1]->children[1]->symbol->get_text().c_str());
 
       if (node->children[0]->type == ASTNodeType::INT) {
         node->children[1]->children[0]->symbol->set_data_type(DATA_TYPE_INT);
@@ -180,7 +181,6 @@ bool IntegerOrChar(int datatype) {
   else
     return false;
 }
-
 bool checkVectorElements(AST *node, int data_type) {
   for (AST *child : node->children) {
     if (DatatypeCompatible(child->symbol->get_data_type(), data_type) == 0) {
@@ -193,8 +193,10 @@ bool checkVectorElements(AST *node, int data_type) {
 }
 
 bool checkVectorSizeInit(AST *node) {
-  if (stoi(node->children[1]->symbol->get_text().c_str()) !=
-      (int)node->children[2]->children.size())
+  cout << node->children[2]->children.size() << endl;
+  if (removeStartingSymbol(
+          node->children[1]->children[1]->symbol->get_text()) !=
+      node->children[2]->children.size())
     return false;
   else
     return true;
@@ -408,6 +410,7 @@ std::pair<int, int> type_infer(AST *node) {
   }
 
   case ASTNodeType::DEC_FUNC:
+    type_infer(node->children[3]);
     return std::make_pair(0, 0); // Declare function
 
   case ASTNodeType::ARG_LIST: {

@@ -17,18 +17,14 @@ using namespace std;
 #define DATA_TYPE_STRING 11
 #define DATA_TYPE_BOOL 12
 
-
 class Symbol {
-
-
-  
 
 public:
   int type;
   int data_type;
   int param_count;
   int vector_size;
-  
+
   string text;
   Symbol() : type(0), text("") {}
   Symbol(int type, string text);
