@@ -39,6 +39,7 @@ enum ASTNodeType {
   DEC_FUNC,
   INIT,
   PARAM,
+  PARAMLIST,
   ARG_LIST,
   EMPTY
 };

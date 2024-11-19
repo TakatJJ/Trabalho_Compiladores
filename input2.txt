@@ -14,11 +14,12 @@ de multiplas
 linhas
 **/
 
-int main ()
+int main (int 9, int 3)
   {
   number = 0;
   7 = 7 - 1;
   7 = #5;
+  9 = #90;
   v[7] = #55;
   print v[#5] 7 c;
   1 = #2;

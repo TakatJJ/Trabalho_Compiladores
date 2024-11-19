@@ -115,6 +115,9 @@ void AST::print_ast(AST *ast, int level) {
   case PARAM:
     cout << "PARAM" << endl;
     break;
+  case PARAMLIST:
+    cout << "PARAMLIST" << endl;
+    break;
   case ARG_LIST:
     cout << "ARG_LIST" << endl;
     break;
@@ -283,12 +286,30 @@ string AST::ast_decompiler(AST *ast) {
     }
     break;
   }
-  case PARAM:
-    if (ast->children.size() > 0)
+  case PARAMLIST:{
+    if (ast->children.size() < 0)
+      return "error_paramlist";
+
+    if (ast->children.size() > 1){
       result += ast_decompiler(ast->children[0]);
-    for (size_t i = 1; i < ast->children.size(); i++) {
-      result += ", " + ast_decompiler(ast->children[i]);
+      for (size_t i = 1; i < ast->children.size(); i++) {
+        result += ", " + ast_decompiler(ast->children[i]);
+      }
     }
+    else {
+      for (auto param : ast->children) {
+        result += ast_decompiler(param);
+      }
+    }
+    break;
+  }
+  case PARAM:{
+    if (ast->children.size() < 0)
+      return "error_param";
+
+    result += ast_decompiler(ast->children[0]) + " " + ast_decompiler(ast->children[1]);
+    break;
+  }
     break;
   case ARG_LIST: {
 
@@ -386,6 +407,8 @@ string AST::ast_type_to_string (AST* node)
             return "DEC_FUNC";
         case INIT:
             return "INIT";
+        case PARAMLIST:
+            return "PARAMLIST";
         case PARAM:
             return "PARAM";
         case ARG_LIST:
