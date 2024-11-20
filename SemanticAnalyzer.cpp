@@ -1,17 +1,17 @@
-#include "semantic.hpp"
+#include "SemanticAnalyzer.hpp"
 #include "AST.hpp"
 #include "Symbols.hpp"
 #include <iostream>
 #include <string>
 
-void check_semantic(AST *node) {
+void SemanticAnalyzer::check_ast_semantic(AST *node) {
   check_and_set_declarations(node);
   check_undeclared(node);
   type_infer(node);
   // Mais coisas aqui abaixo depois
 }
 
-void check_and_set_declarations(AST *node) {
+void SemanticAnalyzer::check_and_set_declarations(AST *node) {
   // cout << "Checking node " << node->ast_type_to_string(node) << endl;
   if (node == nullptr)
     return;
@@ -33,8 +33,8 @@ void check_and_set_declarations(AST *node) {
         node->children[1]->symbol->set_data_type(DATA_TYPE_CHAR);
       }
 
-      if (!DatatypeCompatible(node->children[1]->symbol->get_data_type(),
-                              node->children[2]->symbol->get_data_type())) {
+      if (!data_type_compatible(node->children[1]->symbol->get_data_type(),
+                                node->children[2]->symbol->get_data_type())) {
         cout << "Semantic error: variable "
              << node->children[1]->symbol->get_text()
              << " declared with incompatible data type" << endl;
@@ -77,7 +77,7 @@ void check_and_set_declarations(AST *node) {
 
       node->children[1]->children[0]->symbol->set_type(SYMBOL_VEC);
       node->children[1]->children[0]->symbol->vector_size =
-          removeStartingSymbol(
+          remove_starting_symbol(
               node->children[1]->children[1]->symbol->get_text());
 
       if (node->children[0]->type == ASTNodeType::INT) {
@@ -99,14 +99,14 @@ void check_and_set_declarations(AST *node) {
            << " declared" << endl;
       node->children[1]->children[0]->symbol->set_type(SYMBOL_VEC);
 
-      if (!checkVectorSizeInit(node)) {
+      if (!check_vector_size_init(node)) {
         cout << "Semantic error: vector "
              << node->children[1]->children[0]->symbol->get_text()
              << " declared with incompatible size" << endl;
         exit(4);
       }
       node->children[1]->children[0]->symbol->vector_size =
-          removeStartingSymbol(
+          remove_starting_symbol(
               node->children[1]->children[1]->symbol->get_text().c_str());
 
       if (node->children[0]->type == ASTNodeType::INT) {
@@ -114,7 +114,7 @@ void check_and_set_declarations(AST *node) {
       } else if (node->children[0]->type == ASTNodeType::CHAR) {
         node->children[1]->children[0]->symbol->set_data_type(DATA_TYPE_CHAR);
       }
-      if (!checkVectorElements(
+      if (!check_vector_elements(
               node->children[2],
               node->children[1]->children[0]->symbol->get_data_type())) {
         cout << "Semantic error: vector "
@@ -147,7 +147,7 @@ void check_and_set_declarations(AST *node) {
   }
 }
 
-void check_undeclared(AST *node) {
+void SemanticAnalyzer::check_undeclared(AST *node) {
   cout << "Checking node " << node->ast_type_to_string(node) << endl;
 
   if (node == nullptr)
@@ -166,24 +166,24 @@ void check_undeclared(AST *node) {
   }
 }
 
-bool DatatypeCompatible(int datatype1, int datatype2) {
+bool SemanticAnalyzer::data_type_compatible(int datatype1, int datatype2) {
   if (datatype1 == datatype2)
     return true;
-  else if (IntegerOrChar(datatype1) && IntegerOrChar(datatype2))
+  else if (is_integer_or_char(datatype1) && is_integer_or_char(datatype2))
     return true;
   else
     return false;
 }
 
-bool IntegerOrChar(int datatype) {
+bool SemanticAnalyzer::is_integer_or_char(int datatype) {
   if (datatype == DATA_TYPE_INT || datatype == DATA_TYPE_CHAR)
     return true;
   else
     return false;
 }
-bool checkVectorElements(AST *node, int data_type) {
+bool SemanticAnalyzer::check_vector_elements(AST *node, int data_type) {
   for (AST *child : node->children) {
-    if (DatatypeCompatible(child->symbol->get_data_type(), data_type) == 0) {
+    if (data_type_compatible(child->symbol->get_data_type(), data_type) == 0) {
       cout << "Element " << child->symbol->get_text()
            << " has incompatible data type" << endl;
       return false;
@@ -192,9 +192,9 @@ bool checkVectorElements(AST *node, int data_type) {
   return true;
 }
 
-bool checkVectorSizeInit(AST *node) {
+bool SemanticAnalyzer::check_vector_size_init(AST *node) {
   cout << node->children[2]->children.size() << endl;
-  if (removeStartingSymbol(
+  if (remove_starting_symbol(
           node->children[1]->children[1]->symbol->get_text()) !=
       node->children[2]->children.size())
     return false;
@@ -202,12 +202,12 @@ bool checkVectorSizeInit(AST *node) {
     return true;
 }
 
-int removeStartingSymbol(string s) {
+int SemanticAnalyzer::remove_starting_symbol(string s) {
   s = s.substr(1);
   return stoi(s);
 }
 
-bool valid_id(std::pair<int, int> expr, AST *p) {
+bool SemanticAnalyzer::valid_id(std::pair<int, int> expr, AST *p) {
 
   if (expr.first == SYMBOL_VEC && !(p->type == VECTOR)) {
     fprintf(stderr, "VEC NOT INDEXED:%d second: %d\n", expr.first, expr.second);
@@ -220,7 +220,7 @@ bool valid_id(std::pair<int, int> expr, AST *p) {
   }
   return true;
 }
-std::pair<int, int> type_infer(AST *node) {
+std::pair<int, int> SemanticAnalyzer::type_infer(AST *node) {
   cout << "Checking node in INFER:" << node->ast_type_to_string(node) << endl;
   ASTNodeType node_type = node->type;
 
@@ -240,7 +240,7 @@ std::pair<int, int> type_infer(AST *node) {
     valid_id(left, node->children[0]);
     valid_id(left, node->children[1]);
 
-    if (IntegerOrChar(left.second) && IntegerOrChar(right.second)) {
+    if (is_integer_or_char(left.second) && is_integer_or_char(right.second)) {
       return std::make_pair(0, DATA_TYPE_INT); // Return int type
     }
     fprintf(stderr, "Type mismatch in arithmetic operation.\n");
@@ -257,7 +257,7 @@ std::pair<int, int> type_infer(AST *node) {
     valid_id(left, node->children[0]);
     valid_id(left, node->children[1]);
 
-    if (IntegerOrChar(left.second) && IntegerOrChar(right.second)) {
+    if (is_integer_or_char(left.second) && is_integer_or_char(right.second)) {
       return std::make_pair(0, DATA_TYPE_BOOL); // Comparison should return bool
     }
     fprintf(stderr, "Invalid types for comparison.\n");
@@ -300,7 +300,7 @@ std::pair<int, int> type_infer(AST *node) {
 
     valid_id(right, node->children[1]);
 
-    if (IntegerOrChar(right.second)) {
+    if (is_integer_or_char(right.second)) {
       return std::make_pair(0, 0);
     }
 
@@ -319,7 +319,8 @@ std::pair<int, int> type_infer(AST *node) {
     std::pair<int, int> expr = type_infer(node->children[1]);
     std::pair<int, int> assign_expr = type_infer(node->children[2]);
 
-    if (IntegerOrChar(expr.second) && IntegerOrChar(assign_expr.second)) {
+    if (is_integer_or_char(expr.second) &&
+        is_integer_or_char(assign_expr.second)) {
       return std::make_pair(0, 0);
     }
 
@@ -332,7 +333,7 @@ std::pair<int, int> type_infer(AST *node) {
 
     valid_id(expr, node->children[0]);
 
-    if (IntegerOrChar(expr.second)) {
+    if (is_integer_or_char(expr.second)) {
       return std::make_pair(0, 0);
     }
 
@@ -344,7 +345,8 @@ std::pair<int, int> type_infer(AST *node) {
     for (auto p : node->children) {
 
       std::pair<int, int> expr = type_infer(p);
-      if (!((expr.first == SYMBOL_LIT_STRING) || IntegerOrChar(expr.second))) {
+      if (!((expr.first == SYMBOL_LIT_STRING) ||
+            is_integer_or_char(expr.second))) {
         fprintf(stderr, "NOT LIT STRING OR INT OR CHAR first:%d second: %d\n",
                 expr.first, expr.second);
         exit(4);
@@ -411,7 +413,7 @@ std::pair<int, int> type_infer(AST *node) {
     }
 
     std::pair<int, int> expr = type_infer(node->children[1]);
-    if (!IntegerOrChar(expr.second)) {
+    if (!is_integer_or_char(expr.second)) {
       fprintf(stderr, "Not into compatible indexing vector\n");
       exit(4);
     }
@@ -463,7 +465,7 @@ std::pair<int, int> type_infer(AST *node) {
     for (auto cmd : node->children) {
       std::pair<int, int> arg = type_infer(cmd);
 
-      if (!IntegerOrChar(arg.second)) {
+      if (!is_integer_or_char(arg.second)) {
         fprintf(stderr, "Invalid parameter type.\n");
         exit(4);
       }

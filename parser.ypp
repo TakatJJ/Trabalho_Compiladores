@@ -4,7 +4,7 @@
         #include <iostream>
         #include <map>
         #include <string>
-        #include "semantic.hpp"
+        #include "SemanticAnalyzer.hpp"
         using namespace std;
         int yylex ();
         int yyparse();
@@ -69,7 +69,7 @@
 %%
 
 program: 
-        dec_list { $$ = new AST(PROGRAM, *$1);   $$->print_ast($$, 0); decompiled_text = $$->ast_decompiler($$); check_semantic($$); }
+        dec_list { $$ = new AST(PROGRAM, *$1);   $$->print_ast($$, 0); decompiled_text = $$->ast_decompiler($$); SemanticAnalyzer::check_ast_semantic($$); }
         ;
 
 dec_list : 
