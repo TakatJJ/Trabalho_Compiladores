@@ -142,6 +142,11 @@ void TAC::TAC_Print(TAC *tac) {
   case TAC_READ:
     cout << "TAC_READ: ";
     break;
+
+  case TAC_ARG:
+    cout << "TAC_ARG: ";
+    break;
+
   case TAC_MUL:
     cout << "TAC_MUL: ";
     break;
@@ -315,10 +320,10 @@ vector<TAC *> TAC::resolveARG_LIST(vector<vector<TAC *>> code) {
   vector<TAC *> args = {};
 
   for (auto c : code) {
-    TAC *arg = c.back();
-    c.pop_back();
-    args.push_back(arg);
     result = TAC::TAC_Join(result, c);
+    TAC *arg = c.back();
+    TAC *new_arg = new TAC(TAC_ARG, arg->res, nullptr, nullptr);
+    args.push_back(new_arg);
   }
 
   result = TAC::TAC_Join(result, args);
