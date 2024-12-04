@@ -21,24 +21,55 @@ vector<TAC *> TAC::TAC_Gen(AST *node)
     {
         code.push_back(TAC_Gen(child));
     }
-    cout << "Node type: " << AST::ast_type_to_string(node) << endl;
+    //cout << "Node type: " << AST::ast_type_to_string(node) << endl;
     switch (node->type)
     {
     case ASTNodeType::SYMBOL:
         result =  {new TAC(TAC_SYMBOL, node->symbol, nullptr, nullptr)};
         break;
+
+        
+    case ASTNodeType::NOT:
+        result = resolveTwoOPS(TAC_NOT, code);
+        break;
+    case ASTNodeType::MULT:
+        result = resolveTwoOPS(TAC_MUL, code);
+        break;
+    case ASTNodeType::SUB:
+
+        result = resolveTwoOPS(TAC_SUB, code);
+        break;
+    case ASTNodeType::DIV:
+
+        result = resolveTwoOPS(TAC_DIV, code);
+        break;
     case ASTNodeType::ADD:
         result = resolveTwoOPS(TAC_ADD, code);
         break;
+    case ASTNodeType::AND:
+        result = resolveTwoOPS(TAC_AND, code);
+        break;
+
+    case ASTNodeType::OR:
+        result = resolveTwoOPS(TAC_OR, code);
+        break;
+    case ASTNodeType::SMALLER:
+        result = resolveTwoOPS(TAC_SMALLER, code);
+        break;
+
+    case ASTNodeType::BIGGER:
+        result = resolveTwoOPS(TAC_BIGGER, code);
+        break;
+
+    case ASTNodeType::EQUAL:
+        result = resolveTwoOPS(TAC_EQUAL, code);
+        break;
 
     default:
-
-        if(code.size() == 0){
-            code[0] = {};
-            code[1] = {};
+        for (auto c : code)
+        {
+            result = TAC_Join(result, c);
         }
-
-        result = TAC_Join(code[0], code[1]);
         break;
     }
     return result;
@@ -64,12 +95,17 @@ void TAC::TAC_Print(TAC *tac)
     
     switch (tac->type)
     {
-    case TAC_ADD:
-        cout << "TAC_ADD: ";
-        break;
-    default:
-        cout << "TAC_UNKNOWN: ";
-        break;
+    case TAC_MUL: cout << "TAC_MUL: ";break;
+    case TAC_SUB: cout << "TAC_SUB: ";break;
+    case TAC_DIV: cout << "TAC_DIV: ";break;
+    case TAC_BIGGER: cout << "TAC_BIGGER: ";break;
+    case TAC_SMALLER: cout << "TAC_SMALLER: ";break;
+    case TAC_EQUAL: cout << "TAC_EQUAL: ";break;
+    case TAC_AND: cout << "TAC_AND: ";break;
+    case TAC_OR: cout << "TAC_OR: ";break;
+    case TAC_NOT: cout << "TAC_NOT: ";break;
+    case TAC_ADD: cout << "TAC_ADD: ";break;
+    default: cout << "TAC_UNKNOWN: ";break;
     }
     if (tac->res != nullptr)
         cout << tac->res->get_text() << ",";

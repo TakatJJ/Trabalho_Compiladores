@@ -169,6 +169,8 @@ string AST::ast_decompiler(AST *ast) {
   case SYMBOL:
     return ast->symbol->get_text();
   case NOT:
+    cout << "NOT children:"<< endl;
+    cout << ast->children.size() << endl;
     result = "~" + ast_decompiler(ast->children[0]);
     break;
   case ASSIGN:
