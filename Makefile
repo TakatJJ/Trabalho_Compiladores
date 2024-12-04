@@ -16,4 +16,4 @@ lex.yy.cpp: scanner.l
 	$(CXX) $(CXXFLAGS) -c -g $<
 
 clean:
-	rm -f etapa4 lex.yy.cpp parser.tab.cpp parser.tab.hpp *.o
+	rm -f etapa5 lex.yy.cpp parser.tab.cpp parser.tab.hpp *.o
