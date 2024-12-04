@@ -30,7 +30,8 @@ vector<TAC *> TAC::TAC_Gen(AST *node)
 
         
     case ASTNodeType::NOT:
-        result = resolveTwoOPS(TAC_NOT, code);
+        
+        result = resolveNOT(code);
         break;
     case ASTNodeType::MULT:
         result = resolveTwoOPS(TAC_MUL, code);
@@ -132,9 +133,17 @@ vector<TAC *> TAC::resolveTwoOPS(TAC_TYPE type, vector<vector<TAC *>> code)
     Symbol* op2 = code[1].back()->res? code[1].back()->res : nullptr;
 
     vector<TAC *> newExpr = {new TAC(type, Symbol::makeTemp(),op1,op2 )};
-
-
     vector<TAC *> result = TAC_Join(code[0], TAC_Join(code[1],newExpr));
 
     return result;
+}
+
+vector<TAC *> TAC::resolveNOT(vector<vector<TAC *>> code)
+{
+    Symbol* op1 = code[0].back()->res? code[0].back()->res : nullptr;
+
+    vector<TAC *> newExpr = {new TAC(TAC_NOT, Symbol::makeTemp(),op1,nullptr )};
+    vector<TAC *> result = TAC_Join(code[0],newExpr);
+    return result;
+
 }

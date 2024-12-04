@@ -46,5 +46,6 @@ class TAC {
         static void TAC_Print(vector<TAC*> code);
         static vector<TAC*> TAC_Gen(AST* ast);
         static vector<TAC*> resolveTwoOPS(TAC_TYPE type, vector<vector<TAC*>> code);
+        static vector<TAC*> resolveNOT(vector<vector<TAC*>> code);
         ~TAC();
 };
