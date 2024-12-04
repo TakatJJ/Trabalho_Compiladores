@@ -10,3 +10,4 @@ compac
 *.tab.cpp
 *.tab.hpp
 *.output
+*.exe
