@@ -1,5 +1,5 @@
 #include "Symbols.hpp"
-
+int next_temp = 0;
 Symbol::Symbol(int type, string text) {
   this->type = type;
   this->text = text;
@@ -22,3 +22,9 @@ string Symbol::get_text() { return this->text; }
 
 void Symbol::set_type(int type) { this->type = type; }
 void Symbol::set_data_type(int data_type) { this->data_type = data_type; }
+
+Symbol* Symbol::makeTemp() {
+  Symbol* temp = new Symbol(SYMBOL_VAR, "___temp" + to_string(next_temp));
+  next_temp++;
+  return temp;
+}

@@ -23,6 +23,6 @@ int main(int argc, char *argv[]) {
   ofstream output_file(argv[2]);
   output_file << decompiled_text;
   output_file.close();
-  printSymbolsTable();
+  //printSymbolsTable();
   return 0;
 }

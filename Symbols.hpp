@@ -34,4 +34,6 @@ public:
   int get_data_type();
   void set_data_type(int data_type);
   string get_text();
+  static Symbol* makeTemp();
+
 };
