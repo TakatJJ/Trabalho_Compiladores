@@ -61,7 +61,7 @@ int main ()
 int incn (int x, int n )
   {
   //return #4 <#5;
-  //return x + n;
+  return x + n;
   }
 
 // end of file

@@ -19,14 +19,12 @@ enum TAC_TYPE {
   TAC_LABEL,
   TAC_PARAM,
   TAC_CALL,
-  TAC_RETURN,
+  TAC_RET,
   TAC_BEGINFUNC,
   TAC_ENDFUNC,
   TAC_MOVE, // PRONTO
   TAC_READ, // PRONTO
   TAC_ARG,
-  TAC_FUNC,
-  TAC_END,
   TAC_JUMP, // PRONTO
   TAC_PRINT // PRONTO
 };
@@ -51,5 +49,6 @@ public:
   static vector<TAC *> resolvePRINT(vector<vector<TAC *>> code);
   static vector<TAC *> resolveVECTOR_DEC_INIT(AST *node);
   static vector<TAC *> resolveARG_LIST(vector<vector<TAC *>> code);
+  static vector<TAC *> resolveDEC_FUNC(vector<vector<TAC *>> code);
   ~TAC();
 };

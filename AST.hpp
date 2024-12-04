@@ -8,40 +8,40 @@
 using namespace std;
 
 enum ASTNodeType {
-  ADD,           // PRONTO
-  SUB,           // PRONTO
-  DIV,           // PRONTO
-  MULT,          // PRONTO
-  SYMBOL,        // PRONTO
-  BIGGER,        // PRONTO
-  SMALLER,       // PRONTO
-  EQUAL,         // PRONTO
-  AND,           // PRONTO
-  OR,            // PRONTO
-  NOT,           // PRONTO
-  ASSIGN,        // PRONTO
-  ASSIGN_VECTOR, // PRONTO
-  RETURN,
-  PRINT,   // PRONTO
-  READ,    // PRONTO
-  WHILE,   // PRONTO
-  IF,      // PRONTO
-  IF_ELSE, // PRONTO
-  VECTOR,  // PRONTO
-  INT,     // PRONTO
-  CHAR,    // PRONTO
-  BLOCK,   // PRONTO
-  FUNCALL,
-  DEC_VECTOR, // PRONT
-  DEC_VECTOR_INIT,
-  DEC_VAR, // PRONTO
-  PROGRAM, // PRONTO
-  DEC_FUNC,
-  INIT, // PRONTO
-  PARAM,
-  PARAMLIST,
-  ARG_LIST,
-  EMPTY // PRONTO
+  ADD,             // PRONTO
+  SUB,             // PRONTO
+  DIV,             // PRONTO
+  MULT,            // PRONTO
+  SYMBOL,          // PRONTO
+  BIGGER,          // PRONTO
+  SMALLER,         // PRONTO
+  EQUAL,           // PRONTO
+  AND,             // PRONTO
+  OR,              // PRONTO
+  NOT,             // PRONTO
+  ASSIGN,          // PRONTO
+  ASSIGN_VECTOR,   // PRONTO
+  RETURN,          // PRONTO
+  PRINT,           // PRONTO
+  READ,            // PRONTO
+  WHILE,           // PRONTO
+  IF,              // PRONTO
+  IF_ELSE,         // PRONTO
+  VECTOR,          // PRONTO
+  INT,             // PRONTO
+  CHAR,            // PRONTO
+  BLOCK,           // PRONTO
+  FUNCALL,         // PRONTO
+  DEC_VECTOR,      // PRONTO
+  DEC_VECTOR_INIT, // PRONTO
+  DEC_VAR,         // PRONTO
+  PROGRAM,         // PRONTO
+  DEC_FUNC,        // TALVEZ
+  INIT,            // PRONTO
+  PARAM,           // TALVEZ
+  PARAMLIST,       // TALVEZ
+  ARG_LIST,        // PRONTO
+  EMPTY            // PRONTO
 };
 class AST {
 private:
