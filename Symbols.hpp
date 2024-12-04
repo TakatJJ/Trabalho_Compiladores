@@ -11,6 +11,7 @@ using namespace std;
 #define SYMBOL_FUNC 6
 #define SYMBOL_VEC 7
 #define SYMBOL_PARAM 8
+#define SYMBOL_LABEL 13
 
 #define DATA_TYPE_INT 9
 #define DATA_TYPE_CHAR 10
@@ -35,5 +36,5 @@ public:
   void set_data_type(int data_type);
   string get_text();
   static Symbol* makeTemp();
-
+  static Symbol* makeLabel();
 };

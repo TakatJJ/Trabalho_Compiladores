@@ -4,33 +4,31 @@
 #include <vector>
 
 enum TAC_TYPE {
-    TAC_SYMBOL,
-    TAC_ADD,
-    TAC_SUB,
-    TAC_MUL,
-    TAC_DIV,
-    TAC_COPY,
-    TAC_AND,
-    TAC_OR,
-    TAC_NOT,
-    TAC_BIGGER,
-    TAC_SMALLER,
-    TAC_EQUAL,
-    TAC_GOTO,
-    TAC_IFZ,
+    TAC_SYMBOL, // PRONTO
+    TAC_ADD, // PRONTO
+    TAC_SUB,// PRONTO
+    TAC_MUL,// PRONTO
+    TAC_DIV,// PRONTO
+    TAC_AND,// PRONTO
+    TAC_OR,// PRONTO
+    TAC_NOT,// PRONTO
+    TAC_BIGGER,// PRONTO
+    TAC_SMALLER,// PRONTO
+    TAC_EQUAL,// PRONTO
+    TAC_IFZ,// PRONTO
     TAC_LABEL,
     TAC_PARAM,
     TAC_CALL,
     TAC_RETURN,
     TAC_BEGINFUNC,
     TAC_ENDFUNC,
-    TAC_MOV,
-    TAC_READ,
-    TAC_WRITE,
+    TAC_MOVE, // PRONTO
+    TAC_READ, // PRONTO
     TAC_ARG,
-    TAC_TEMP,
     TAC_FUNC,
-    TAC_END
+    TAC_END,
+    TAC_JUMP, // PRONTO
+    TAC_PRINT // PRONTO
 };
 
 class TAC {
@@ -47,5 +45,9 @@ class TAC {
         static vector<TAC*> TAC_Gen(AST* ast);
         static vector<TAC*> resolveTwoOPS(TAC_TYPE type, vector<vector<TAC*>> code);
         static vector<TAC*> resolveNOT(vector<vector<TAC*>> code);
+        static vector<TAC*> resolveIF(vector<vector<TAC*>> code);
+        static vector<TAC*> resolveIFELSE(vector<vector<TAC*>> code);
+        static vector<TAC*> resolveWHILE(vector<vector<TAC*>> code);
+        static vector<TAC*> resolvePRINT(vector<vector<TAC*>> code);
         ~TAC();
 };

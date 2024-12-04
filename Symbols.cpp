@@ -1,5 +1,6 @@
 #include "Symbols.hpp"
 int next_temp = 0;
+int next_label = 0;
 Symbol::Symbol(int type, string text) {
   this->type = type;
   this->text = text;
@@ -27,4 +28,10 @@ Symbol* Symbol::makeTemp() {
   Symbol* temp = new Symbol(SYMBOL_VAR, "___temp" + to_string(next_temp));
   next_temp++;
   return temp;
+}
+
+Symbol* Symbol::makeLabel() {
+  Symbol* label = new Symbol(SYMBOL_LABEL, "___label" + to_string(next_label));
+  next_label++;
+  return label;
 }
