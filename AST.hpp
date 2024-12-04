@@ -8,36 +8,36 @@
 using namespace std;
 
 enum ASTNodeType {
-  ADD,// PRONTO
-  SUB,// PRONTO
-  DIV,// PRONTO
-  MULT,// PRONTO
-  SYMBOL,// PRONTO
-  BIGGER,// PRONTO
-  SMALLER,// PRONTO
-  EQUAL,// PRONTO
-  AND,// PRONTO
-  OR,// PRONTO
-  NOT,// PRONTO
-  ASSIGN,// PRONTO
-  ASSIGN_VECTOR,
+  ADD,           // PRONTO
+  SUB,           // PRONTO
+  DIV,           // PRONTO
+  MULT,          // PRONTO
+  SYMBOL,        // PRONTO
+  BIGGER,        // PRONTO
+  SMALLER,       // PRONTO
+  EQUAL,         // PRONTO
+  AND,           // PRONTO
+  OR,            // PRONTO
+  NOT,           // PRONTO
+  ASSIGN,        // PRONTO
+  ASSIGN_VECTOR, // PRONTO
   RETURN,
-  PRINT, //PRONTO
-  READ, //PRONTO
-  WHILE,// PRONTO
-  IF,// PRONTO
-  IF_ELSE,// PRONTO
-  VECTOR,
-  INT,// PRONTO
-  CHAR,// PRONTO
-  BLOCK,// PRONTO
+  PRINT,   // PRONTO
+  READ,    // PRONTO
+  WHILE,   // PRONTO
+  IF,      // PRONTO
+  IF_ELSE, // PRONTO
+  VECTOR,  // PRONTO
+  INT,     // PRONTO
+  CHAR,    // PRONTO
+  BLOCK,   // PRONTO
   FUNCALL,
-  DEC_VECTOR,
+  DEC_VECTOR, // PRONT
   DEC_VECTOR_INIT,
-  DEC_VAR, //PRONTO
+  DEC_VAR, // PRONTO
   PROGRAM, // PRONTO
   DEC_FUNC,
-  INIT,
+  INIT, // PRONTO
   PARAM,
   PARAMLIST,
   ARG_LIST,
