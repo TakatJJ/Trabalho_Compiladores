@@ -12,3 +12,4 @@ compac
 *.tab.hpp
 *.output
 *.exe
+*.tgz

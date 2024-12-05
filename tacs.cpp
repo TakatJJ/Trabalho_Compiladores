@@ -28,12 +28,12 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
     break;
 
   case ASTNodeType::DEC_VAR:
-    result = {new TAC(TAC_MOVE, node->children[1]->symbol,
+    result = {new TAC(TAC_DEC, node->children[1]->symbol,
                       node->children[2]->symbol, nullptr)};
     break;
 
   case ASTNodeType::DEC_VECTOR:
-    result = {new TAC(TAC_MOVE, node->children[1]->children[0]->symbol,
+    result = {new TAC(TAC_DEC, node->children[1]->children[0]->symbol,
                       node->children[1]->children[1]->symbol, nullptr)};
     break;
 
@@ -49,7 +49,7 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
   case ASTNodeType::ASSIGN_VECTOR:
     result = TAC_Join(code[1], code[2]);
     result =
-        TAC_Join(result, {new TAC(TAC_MOVE, node->children[0]->symbol,
+        TAC_Join(result, {new TAC(TAC_VEC_WRITE, node->children[0]->symbol,
                                   code[1].back()->res, code[2].back()->res)});
     break;
 
@@ -72,6 +72,11 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
     result = resolveDEC_FUNC(code);
     break;
 
+  case ASTNodeType::VECTOR:
+    result =
+        TAC_Join(code[1], {new TAC(TAC_VEC, Symbol::makeTemp(),
+                                   code[0].back()->res, code[1].back()->res)});
+    break;
   case ASTNodeType::RETURN:
     result = TAC_Join(
         code[0], {new TAC(TAC_RET, code[0].back()->res, nullptr, nullptr)});
@@ -149,11 +154,20 @@ vector<TAC *> TAC::TAC_Join(vector<TAC *> first, vector<TAC *> second) {
 }
 
 void TAC::TAC_Print(TAC *tac) {
-  if (tac->type == TAC_SYMBOL)
+  if (tac->type == TAC_SYMBOL || tac->type == TAC_PARAM)
     return;
 
   switch (tac->type) {
 
+  case TAC_DEC:
+    cout << "TAC_DEC: ";
+    break;
+  case TAC_VEC:
+    cout << "TAC_VEC: ";
+    break;
+  case TAC_VEC_WRITE:
+    cout << "TAC_VEC_WRITE: ";
+    break;
   case TAC_READ:
     cout << "TAC_READ: ";
     break;
@@ -338,7 +352,7 @@ vector<TAC *> TAC::resolveVECTOR_DEC_INIT(AST *node) {
 
   for (int i = 0; i < lit_list.size(); i++) {
     std::string index = "#" + to_string(i);
-    result = TAC_Join(result, {new TAC(TAC_MOVE, id, lit_list[i]->symbol,
+    result = TAC_Join(result, {new TAC(TAC_DEC, id, lit_list[i]->symbol,
                                        new Symbol(SYMBOL_LIT_INTEGER, index))});
   }
 
@@ -349,12 +363,14 @@ vector<TAC *> TAC::resolveARG_LIST(vector<vector<TAC *>> code) {
 
   vector<TAC *> result = {};
   vector<TAC *> args = {};
-
+  int i = 0;
   for (auto c : code) {
+    Symbol *index = new Symbol(SYMBOL_LIT_INTEGER, "#" + to_string(i));
     result = TAC::TAC_Join(result, c);
     TAC *arg = c.back();
-    TAC *new_arg = new TAC(TAC_ARG, arg->res, nullptr, nullptr);
+    TAC *new_arg = new TAC(TAC_ARG, arg->res, index, nullptr);
     args.push_back(new_arg);
+    i++;
   }
 
   result = TAC::TAC_Join(result, args);
@@ -368,6 +384,14 @@ vector<TAC *> TAC::resolveDEC_FUNC(vector<vector<TAC *>> code) {
 
   Symbol *id = code[1].back()->res;
   TAC *begin_func = new TAC(TAC_BEGINFUNC, id, nullptr, nullptr);
+  int i = 0;
+
+  for (auto c : code[2]) {
+    // cout << "_______________________" << "PARAM: ";
+    Symbol *index = new Symbol(SYMBOL_LIT_INTEGER, "#" + to_string(i));
+    c->op1 = index;
+    i++;
+  }
   result = TAC_Join({begin_func}, code[2]);
   result = TAC_Join(result, code[3]);
   result = TAC_Join(result, {new TAC(TAC_ENDFUNC, id, nullptr, nullptr)});
