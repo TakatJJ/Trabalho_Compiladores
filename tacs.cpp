@@ -349,12 +349,14 @@ vector<TAC *> TAC::resolveARG_LIST(vector<vector<TAC *>> code) {
 
   vector<TAC *> result = {};
   vector<TAC *> args = {};
-
+  int i = 0;
   for (auto c : code) {
+    Symbol *index = new Symbol(SYMBOL_LIT_INTEGER, "#" + to_string(i));
     result = TAC::TAC_Join(result, c);
     TAC *arg = c.back();
-    TAC *new_arg = new TAC(TAC_ARG, arg->res, nullptr, nullptr);
+    TAC *new_arg = new TAC(TAC_ARG, arg->res, index, nullptr);
     args.push_back(new_arg);
+    i++;
   }
 
   result = TAC::TAC_Join(result, args);
@@ -368,6 +370,14 @@ vector<TAC *> TAC::resolveDEC_FUNC(vector<vector<TAC *>> code) {
 
   Symbol *id = code[1].back()->res;
   TAC *begin_func = new TAC(TAC_BEGINFUNC, id, nullptr, nullptr);
+  int i = 0;
+
+  for (auto c : code[2]){
+    cout << "_______________________" << "PARAM: ";
+    Symbol *index = new Symbol(SYMBOL_LIT_INTEGER, "#" + to_string(i));
+    c->op1 = index;
+    i++;
+  }
   result = TAC_Join({begin_func}, code[2]);
   result = TAC_Join(result, code[3]);
   result = TAC_Join(result, {new TAC(TAC_ENDFUNC, id, nullptr, nullptr)});
