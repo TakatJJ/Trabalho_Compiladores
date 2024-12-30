@@ -1,0 +1,6 @@
+char c = 'a';
+int 3 = #4;
+int main () {
+    print "olaa";
+    return #0;
+}

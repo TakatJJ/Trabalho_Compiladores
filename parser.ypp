@@ -2,16 +2,19 @@
         #include <cstdio>
         #include <stdio.h>
         #include <iostream>
+        #include <vector>
         #include <map>
         #include <string>
         #include "SemanticAnalyzer.hpp"
         #include "tacs.hpp"
+        #include "asm.hpp"
         using namespace std;
         int yylex ();
         int yyparse();
         int getLineNumber();
         int yyerror(const char *s);
         string decompiled_text;
+        vector<TAC*> tac_vec;
         
 
 %}
@@ -70,7 +73,7 @@
 %%
 
 program: 
-        dec_list { $$ = new AST(PROGRAM, *$1);   /* $$->print_ast($$, 0); */ TAC::TAC_Print(TAC::TAC_Gen($$)); decompiled_text = $$->ast_decompiler($$); /* SemanticAnalyzer::check_ast_semantic($$); */ }
+        dec_list { $$ = new AST(PROGRAM, *$1);   /* $$->print_ast($$, 0); */ tac_vec = TAC::TAC_Gen($$);TAC::TAC_Print(tac_vec); decompiled_text = $$->ast_decompiler($$); /* SemanticAnalyzer::check_ast_semantic($$); */ ASM::generate_ASM(tac_vec);}
         ;
 
 dec_list : 
