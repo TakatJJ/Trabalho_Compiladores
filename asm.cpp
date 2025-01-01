@@ -162,6 +162,21 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             tac->op1->text = resolveSymbol(tac->op1);
             tac->op2->text = resolveSymbol(tac->op2);
             asm_code += "\tmovl\t_"+tac->op1->get_text()+",\t%eax\n\ttestl\t%eax,\t%eax\n\tjne\tL"+to_string(Lindex)+"\n\tmovl\t_"+tac->op2->get_text()+",\t%eax\n\ttestl\t%eax,\t%eax\n\tje\tL"+to_string(Lindex+1)+"\nL"+to_string(Lindex)+":\n\tmovl\t$1,\t%eax\n\tjmp\tL"+to_string(Lindex+2)+"\nL"+to_string(Lindex+1)+":\n\tmovl\t$0,\t%eax\nL"+to_string(Lindex+2)+":\n\tmovb\t%al,\t_"+tac->res->get_text()+"\n";
+            Lindex += 3;
+            break;
+        case TAC_NOT:
+            tac->op1->text = resolveSymbol(tac->op1);
+            asm_code += "\tmovzbl\t_"+tac->op1->get_text()+",\t%eax\n\txorl\t$1,\t%eax\n\tmovb\t%al,\t_"+tac->res->get_text()+"\n";
+            break;
+        case TAC_IFZ:
+            tac->op1->text = resolveSymbol(tac->op1);
+            asm_code += "\tmovzbl\t_"+tac->op1->get_text()+", %eax\n\ttestb\t%al, %al\n\tje\t_"+tac->res->get_text()+"\n";
+            break;
+        case TAC_LABEL:
+            asm_code += "_"+tac->res->get_text()+":\n";
+            break;
+        case TAC_JUMP:
+            asm_code += "\tjmp\t_"+tac->res->get_text()+"\n";
             break;
         default:
             break;
