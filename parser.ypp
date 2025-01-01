@@ -73,7 +73,7 @@
 %%
 
 program: 
-        dec_list { $$ = new AST(PROGRAM, *$1);   /* $$->print_ast($$, 0); */ tac_vec = TAC::TAC_Gen($$);TAC::TAC_Print(tac_vec); decompiled_text = $$->ast_decompiler($$); /* SemanticAnalyzer::check_ast_semantic($$); */ ASM::generate_ASM(tac_vec);}
+        dec_list { $$ = new AST(PROGRAM, *$1);   /* $$->print_ast($$, 0); */ tac_vec = TAC::TAC_Gen($$);TAC::TAC_Print(tac_vec); decompiled_text = $$->ast_decompiler($$); SemanticAnalyzer::check_ast_semantic($$); ASM::generate_ASM(tac_vec);}
         ;
 
 dec_list : 
