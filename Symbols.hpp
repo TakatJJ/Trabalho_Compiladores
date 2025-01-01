@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <map>
 using namespace std;
+
 
 #define SYMBOL_IDENTIFIER 1
 #define SYMBOL_LIT_INTEGER 2
@@ -38,3 +40,4 @@ public:
   static Symbol* makeTemp();
   static Symbol* makeLabel();
 };
+extern map<string, Symbol> symbols_table;
