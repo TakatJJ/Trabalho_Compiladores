@@ -26,12 +26,14 @@ void Symbol::set_data_type(int data_type) { this->data_type = data_type; }
 
 Symbol* Symbol::makeTemp() {
   Symbol* temp = new Symbol(SYMBOL_VAR, "___temp" + to_string(next_temp));
+  symbols_table[temp->text] = *temp;
   next_temp++;
   return temp;
 }
 
 Symbol* Symbol::makeLabel() {
   Symbol* label = new Symbol(SYMBOL_LABEL, "___label" + to_string(next_label));
+  symbols_table[label->text] = *label;
   next_label++;
   return label;
 }

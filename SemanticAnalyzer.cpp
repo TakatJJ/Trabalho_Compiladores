@@ -148,7 +148,7 @@ void SemanticAnalyzer::check_and_set_declarations(AST *node) {
 }
 
 void SemanticAnalyzer::check_undeclared(AST *node) {
-  cout << "Checking node " << node->ast_type_to_string(node) << endl;
+  // cout << "Checking node " << node->ast_type_to_string(node) << endl;
 
   if (node == nullptr)
     return;
@@ -221,7 +221,7 @@ bool SemanticAnalyzer::valid_id(std::pair<int, int> expr, AST *p) {
   return true;
 }
 std::pair<int, int> SemanticAnalyzer::type_infer(AST *node) {
-  cout << "Checking node in INFER:" << node->ast_type_to_string(node) << endl;
+  // cout << "Checking node in INFER:" << node->ast_type_to_string(node) << endl;
   ASTNodeType node_type = node->type;
 
   switch (node_type) {
