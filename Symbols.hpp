@@ -38,6 +38,7 @@ public:
   void set_data_type(int data_type);
   string get_text();
   static Symbol* makeTemp();
+  static Symbol* makeTemp(int data_type);
   static Symbol* makeLabel();
 };
 extern map<string, Symbol> symbols_table;

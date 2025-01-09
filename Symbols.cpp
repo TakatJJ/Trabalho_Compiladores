@@ -31,6 +31,14 @@ Symbol* Symbol::makeTemp() {
   return temp;
 }
 
+Symbol* Symbol::makeTemp(int data_type) {
+  Symbol* temp = new Symbol(SYMBOL_VAR, "___temp" + to_string(next_temp));
+  symbols_table[temp->text] = *temp;
+  temp->set_data_type(data_type);
+  next_temp++;
+  return temp;
+}
+
 Symbol* Symbol::makeLabel() {
   Symbol* label = new Symbol(SYMBOL_LABEL, "___label" + to_string(next_label));
   symbols_table[label->text] = *label;

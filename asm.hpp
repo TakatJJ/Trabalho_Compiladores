@@ -16,4 +16,5 @@ public:
     static string cleanVectorIndex(string text);
     static string generate_literals(string asm_code);
     static string resolveSymbol(Symbol* symbol);
+    static string resolveVecIndex (Symbol *symbol);
 };

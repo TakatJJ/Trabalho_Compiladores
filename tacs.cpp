@@ -56,7 +56,8 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
     result = {new TAC(TAC_READ, node->children[0]->symbol, nullptr, nullptr)};
     break;
   case ASTNodeType::FUNCALL:
-    result = TAC_Join(code[1], {new TAC(TAC_CALL, Symbol::makeTemp(),
+  // cout << "AAAAAAAAAAAAAAAAAAAA" << node->children[0]->symbol->get_text() << " TYPE: "<< node->children[0]->symbol->get_data_type()<< endl;
+    result = TAC_Join(code[1], {new TAC(TAC_CALL, Symbol::makeTemp(node->children[0]->symbol->get_data_type()),
                                         node->children[0]->symbol, nullptr)});
     break;
 
@@ -72,9 +73,9 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
     break;
 
   case ASTNodeType::VECTOR:
-  // cout << node->children[0]->symbol->get_text() << endl;
+  // cout <<"AAAAAAAAAAAAAAA" <<node->children[0]->symbol->get_text()<<" TYPE: "<< node->children[0]->symbol->get_data_type()<< endl;
     result =
-        TAC_Join(code[1], {new TAC(TAC_VEC, Symbol::makeTemp(),
+        TAC_Join(code[1], {new TAC(TAC_VEC, Symbol::makeTemp(node->children[0]->symbol->get_data_type()),
                                    code[0].back()->res, code[1].back()->res)});
     break;
   case ASTNodeType::RETURN:

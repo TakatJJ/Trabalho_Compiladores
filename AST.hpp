@@ -41,7 +41,8 @@ enum ASTNodeType {
   PARAM,           // TALVEZ
   PARAMLIST,       // TALVEZ
   ARG_LIST,        // PRONTO
-  EMPTY            // PRONTO
+  EMPTY,           // PRONTO
+  ERROR
 };
 class AST {
 private:
@@ -59,4 +60,5 @@ public:
   static void print_ast(AST *ast, int level = 0);
   static string ast_type_to_string(AST *ast);
 };
+
 #endif
