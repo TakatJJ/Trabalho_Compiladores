@@ -230,7 +230,7 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             {
                 for (int index = 0; index < params.size(); index++)
                 {
-                    asm_code += "\tmovl\t"+to_string((4*(index+1)))+"(%ebp),\t%eax\n\tmovl\t%eax,\t_"+params[index]+"\n";
+                    asm_code += "\tmovl\t"+to_string((4*(index+2)) )+"(%ebp),\t%eax\n\tmovl\t%eax,\t_"+params[index]+"\n";
                 }
                 params.clear();
             }
@@ -246,7 +246,7 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             }
             for (int index = 0; index < argList.size(); index++)
             {
-                asm_code += "\tmovl\t_"+argList[index]+",\t%eax\n\tmovl\t%eax,\t"+to_string(stack_size - (4*(index+1)))+"(%esp)\n";
+                asm_code+= "movzbl\t_"+argList[index]+", %eax\n\tmovsbl\t%al,\t%eax\n\tmovl\t%eax,\t"+to_string(stack_size - (4*(index+1)))+"(%esp)\n";
             }
             asm_code += "\tcall\t_"+tac->op1->get_text()+"\n";
             asm_code += "\tmovl\t%eax,\t_"+tac->res->get_text()+"\n";
