@@ -133,7 +133,7 @@ void SemanticAnalyzer::check_and_set_declarations(AST *node) {
     } else {
       cout << "Parameter " << node->children[1]->symbol->get_text()
            << " declared" << endl;
-      node->children[1]->symbol->set_type(SYMBOL_PARAM);
+      node->children[1]->symbol->set_type(SYMBOL_VAR);
       if (node->children[0]->type == ASTNodeType::INT) {
         node->children[1]->symbol->set_data_type(DATA_TYPE_INT);
       } else if (node->children[0]->type == ASTNodeType::CHAR) {

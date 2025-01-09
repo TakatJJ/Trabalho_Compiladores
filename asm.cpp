@@ -152,6 +152,7 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
         }
         case TAC_MOVE:
             tac->res->text = resolveSymbol(tac->res);
+            tac->op1->text = resolveSymbol(tac->op1);   
             asm_code += "\tmovl\t_"+tac->op1->get_text()+",\t%eax\n\tmovl\t%eax,\t_"+tac->res->text + "\n";
             break;
         case TAC_ADD:
