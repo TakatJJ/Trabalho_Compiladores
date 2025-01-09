@@ -20,7 +20,6 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
   for (auto child : node->children) {
     code.push_back(TAC_Gen(child));
   }
-  // cout << "Node type: " << AST::ast_type_to_string(node) << endl;
 
   switch (node->type) {
   case ASTNodeType::SYMBOL:
@@ -73,6 +72,7 @@ vector<TAC *> TAC::TAC_Gen(AST *node) {
     break;
 
   case ASTNodeType::VECTOR:
+  // cout << node->children[0]->symbol->get_text() << endl;
     result =
         TAC_Join(code[1], {new TAC(TAC_VEC, Symbol::makeTemp(),
                                    code[0].back()->res, code[1].back()->res)});
@@ -154,7 +154,7 @@ vector<TAC *> TAC::TAC_Join(vector<TAC *> first, vector<TAC *> second) {
 }
 
 void TAC::TAC_Print(TAC *tac) {
-  if (tac->type == TAC_SYMBOL || tac->type == TAC_PARAM)
+  if (tac->type == TAC_SYMBOL)
     return;
 
   switch (tac->type) {

@@ -54,19 +54,27 @@ string ASM::create_asm_vector(TAC* tac) {
 
 string ASM::generate_variables(string asm_code, vector<TAC*> tacs){
     for (TAC* tac : tacs) {
-        if (tac->type == TAC_DEC)
-        {
-            if (tac->res->type == SYMBOL_VAR)
+        switch(tac->type){
+        case TAC_DEC:
             {
-                asm_code += create_asm_variable(tac);
+                if (tac->res->type == SYMBOL_VAR)
+                {
+                    asm_code += create_asm_variable(tac);
+                }
+                else if (tac->res->type == SYMBOL_VEC)
+                {
+                    if (!tac->op2)
+                        asm_code += create_asm_vector_empty(tac);
+                    else
+                        asm_code += create_asm_vector(tac);
+                }
             }
-            else if (tac->res->type == SYMBOL_VEC)
-            {
-                if (!tac->op2)
-                    asm_code += create_asm_vector_empty(tac);
-                else
-                    asm_code += create_asm_vector(tac);
-            }
+            break;
+        case TAC_PARAM:
+            asm_code += create_asm_variable(tac);
+            break;
+        default:
+            break;
         }
     }
     // cout << asm_code << endl;
@@ -100,6 +108,9 @@ string ASM::cleanVectorIndex(string text) {
 void ASM::generate_ASM(vector<TAC*> tacs) {
     string asm_code = "";
     int Lindex = 0;
+    vector<string> argList = {};
+    int param_num = 0;
+    vector<string> params = {};
 
     asm_code = generate_temp(asm_code);
     asm_code = generate_literals(asm_code);
@@ -108,9 +119,18 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
     asm_code += "\t.section\t.rdata,\"dr\"\nLC0:\n\t.ascii\t\"%d\\0\"\nLC1:\n\t.ascii\t\"%c\\0\"\n";
     ofstream output_file("assembly.s");
     for (TAC* tac : tacs) {
-        // Generate assembly code for each TAC
-        // ...
+        
         switch(tac->type){
+        
+        case TAC_BEGINFUNC:
+            param_num = tac->res->param_count;
+            if (tac->res->get_text() == "main")
+                asm_code+="\t.def\t___main;\t.scl\t2;\t.type	32;\t.endef\n";
+            asm_code += "\t.text\n\t.globl\t_"+tac->res->get_text()+"\n\t.def\t_"+tac->res->get_text()+";\t.scl\t2;\t.type\t32;\t.endef\n_"+tac->res->get_text()+":\n\tpushl\t%ebp\n\tmovl\t%esp,\t%ebp\n";
+            if (tac->res->get_text() == "main")
+                asm_code += "\tandl\t$-16,\t%espn\n\tcall\t___main\n";
+
+            break;
         case TAC_PRINT:{
             tac->res->text = resolveSymbol(tac->res);
             if (tac->res->data_type == DATA_TYPE_CHAR)
@@ -192,6 +212,38 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
         case TAC_VEC_WRITE:
             tac->op2->text = resolveSymbol(tac->op2);
             asm_code += "\tmovl\t_"+tac->op2->get_text()+",\t_"+tac->res->get_text()+"+"+to_string(stoi(cleanVectorIndex(tac->op1->text))*4)+"\n";
+            break;
+        case TAC_PARAM:
+            params.push_back(tac->res->get_text());
+            if (param_num == params.size())
+            {
+                for (int index = 0; index < params.size(); index++)
+                {
+                    asm_code += "\tmovl\t_"+params[index]+",\t%eax\n\tmovl\t%eax,\t"+to_string(4*(index+1))+"(%esp)\n";
+                }
+                params.clear();
+            }
+            break;
+        case TAC_ARG:
+            argList.push_back(tac->res->get_text());
+            break;
+        case TAC_CALL:{
+            int stack_size = 4*argList.size();
+            if (argList.size() > 0){
+                asm_code += "\tsubl\t$"+to_string(stack_size)+",\t%esp\n";
+            }
+            for (int index = 0; index < argList.size(); index++)
+            {
+                asm_code += "\tmovl\t_"+argList[index]+",\t%eax\n\tmovl\t%eax,\t"+to_string(stack_size - (4*(index+1)))+"(%esp)\n";
+            }
+            asm_code += "\tcall\t_"+tac->op1->get_text()+"\n";
+            argList.clear();
+            break;
+        }
+        case TAC_RET:
+            asm_code += "\tleave\n\tret\n";
+            break;
+        case TAC_ENDFUNC:
             break;
         default:
             break;
