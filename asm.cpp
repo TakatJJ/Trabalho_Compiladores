@@ -126,7 +126,7 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             param_num = tac->res->param_count;
             if (tac->res->get_text() == "main")
                 asm_code+="\t.def\t___main;\t.scl\t2;\t.type	32;\t.endef\n";
-            asm_code += "\t.text\n\t.globl\t_"+tac->res->get_text()+"\n\t.def\t_"+tac->res->get_text()+";\t.scl\t2;\t.type\t32;\t.endef\n_"+tac->res->get_text()+":\n\tpushl\t%ebp\n\tmovl\t%esp,\t%ebp\n";
+            asm_code += "\t.text\n\t.globl\t_"+tac->res->get_text()+"\n\t.def\t_"+tac->res->get_text()+";\t.scl\t2;\t.type\t32;\t.endef\n_"+tac->res->get_text()+":\n\tpushl\t%ebp\n\tmovl\t%esp,\t%ebp\n\tpushl\t%edi\n";
             if (tac->res->get_text() == "main")
                 asm_code += "\tandl\t$-16,\t%esp\n\tcall\t___main\n";
 
@@ -143,9 +143,9 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             break;
         }
         case TAC_VEC:{
-            string index = resolveVecIndex(tac->res);
-            if (tac->res->get_type() == SYMBOL_VAR)
-                asm_code+= "\tmovl\t_"+tac->res->get_text()+",\t%eax\n";
+            string index = resolveVecIndex(tac->op2);
+            if (tac->op2->get_type() == SYMBOL_VAR)
+                asm_code+= "\tmovl\t_"+tac->op2->get_text()+",\t%eax\n";
             
             asm_code += "\tmovl\t_"+tac->op1->get_text()+index+", %eax\n\tmovl\t%eax,\t_"+ tac->res->get_text() + "\n";
             break;
@@ -219,9 +219,9 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             tac->op2->text = resolveSymbol(tac->op2);
             string index = resolveVecIndex(tac->op1);
             if (tac->op1->get_type() == SYMBOL_VAR)
-                asm_code+= "\tmovl\t_"+tac->op1->get_text()+",\t%eax\n";
-            asm_code+= "\tmovl\t_"+tac->op2->get_text()+",\t%edx\n";
-            asm_code += "\tmovl\t%edx,\t_"+tac->res->get_text()+index+"\n";
+                asm_code+= "\tmovl\t_"+tac->op1->get_text()+",\t%edx\n";
+            asm_code+= "\tmovl\t_"+tac->op2->get_text()+",\t%eax\n";
+            asm_code += "\tmovl\t%eax,\t_"+tac->res->get_text()+index+"\n";
             break;
         }
         case TAC_PARAM:
@@ -230,7 +230,7 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             {
                 for (int index = 0; index < params.size(); index++)
                 {
-                    asm_code += "\tmovl\t"+to_string((16*(index+1)))+"(%ebp),\t%eax\n\tmovl\t%eax,\t_"+params[index]+"\n";
+                    asm_code += "\tmovl\t"+to_string((4*(index+1)))+"(%ebp),\t%eax\n\tmovl\t%eax,\t_"+params[index]+"\n";
                 }
                 params.clear();
             }
@@ -240,13 +240,13 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
             argList.push_back(tac->res->get_text());
             break;
         case TAC_CALL:{
-            int stack_size = 16*argList.size();
+            int stack_size = 4*argList.size();
             if (argList.size() > 0){
                 asm_code += "\tsubl\t$"+to_string(stack_size)+",\t%esp\n";
             }
             for (int index = 0; index < argList.size(); index++)
             {
-                asm_code += "\tmovl\t_"+argList[index]+",\t%eax\n\tmovl\t%eax,\t"+to_string(stack_size - (16*(index+1)))+"(%esp)\n";
+                asm_code += "\tmovl\t_"+argList[index]+",\t%eax\n\tmovl\t%eax,\t"+to_string(stack_size - (4*(index+1)))+"(%esp)\n";
             }
             asm_code += "\tcall\t_"+tac->op1->get_text()+"\n";
             asm_code += "\tmovl\t%eax,\t_"+tac->res->get_text()+"\n";
@@ -271,7 +271,7 @@ void ASM::generate_ASM(vector<TAC*> tacs) {
 string ASM::resolveVecIndex (Symbol *symbol) {
     string index = "";
     if (symbol->get_type() == SYMBOL_VAR){
-                index = "(,%eax,4)";
+                index = "(,%edx,4)";
             }
             else {
                 index = "+"+to_string(stoi(cleanVectorIndex(symbol->text))*4);

@@ -17,4 +17,5 @@ public:
     static string generate_literals(string asm_code);
     static string resolveSymbol(Symbol* symbol);
     static string resolveVecIndex (Symbol *symbol);
+    static string makeImediate (Symbol *symbol);
 };
